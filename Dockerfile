@@ -1,4 +1,4 @@
-FROM resin/resin-base:v4.2.1
+FROM resin/resin-base:v4.2.2
 
 ENV HAPROXY_MAJOR 1.8
 ENV HAPROXY_VERSION 1.8.13
