@@ -51,6 +51,8 @@ RUN set -x \
 		| xargs -r apt-mark manual \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
+ADD generate-cfg /usr/src/app
+RUN npm install
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
