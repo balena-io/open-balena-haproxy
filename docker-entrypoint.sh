@@ -14,4 +14,6 @@ if [ "$1" = 'haproxy' ]; then
 	set -- haproxy -W -db "$@"
 fi
 
+/usr/src/app/generate-haproxy-cfg.js
+
 exec "$@"
