@@ -52,7 +52,7 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 ADD generate-cfg /usr/src/app
-RUN npm install
+RUN npm install -g npm@5.6.0 && npm install --production
 COPY docker-entrypoint.sh /
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
