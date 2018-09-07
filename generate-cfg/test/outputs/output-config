@@ -58,7 +58,7 @@ tcp-request inspect-delay 2s
 tcp-request content accept if { req.ssl_hello_type 1 }
 acl is_ssl req.ssl_ver 2:3.4
 use_backend  redirect_to_1000_in if is_ssl
-use_backend vpn_http_80 if !is_ssl
+use_backend backend_vpn_tcp_443 if !is_ssl
 
 backend redirect_to_1000_in
 mode tcp
@@ -68,7 +68,7 @@ server localhost 127.0.0.1:1000 send-proxy-v2
 frontend 1000_in
 mode http
 option forwardfor
-bind 127.0.0.1:1000 ssl crt undefined 
+bind 127.0.0.1:1000 ssl crt /tmp/chain.pem 
 reqadd X-Forwarded-Proto:\ https
 
 acl host_admin_http_80 hdr_dom(host) -i admin.resindev.io
@@ -108,8 +108,8 @@ acl host_sentry_http_80 hdr_dom(host) -i sentry.resindev.io
 use_backend backend_sentry_http_80 if host_sentry_http_80
 
 frontend https_445_in
-mode https
-bind *:445 ssl crt undefined 
+mode http
+bind *:445 ssl crt /tmp/chain.pem 
 reqadd X-Forwarded-Proto:\ https
 
 acl host_registry2_http_81 hdr_dom(host) -i registry2.resindev.io
@@ -218,6 +218,10 @@ mode http
 option forwardfor
 balance roundrobin
 server registry2 registry2:81 check port 81
+
+backend backend_vpn_tcp_443
+mode tcp
+server vpn vpn:443 send-proxy-v2 check-send-proxy port 443
 
 backend backend_devices_tcp_2222
 mode tcp
