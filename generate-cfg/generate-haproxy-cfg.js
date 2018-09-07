@@ -102,7 +102,13 @@ const generateBackendConfig = (configuration) => {
 			confStr +=
 				'option forwardfor\n' +
 				'balance roundrobin\n'
-		confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' check port ' + be.port + '\n'
+		if (be.port === '443') {
+			confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' send-proxy-v2 check-send-proxy port ' + be.port + '\n'
+
+		}
+		else{
+			confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' check port ' + be.port + '\n'
+		}
 	})
 	return confStr
 }
@@ -193,7 +199,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 			'tcp-request content accept if { req.ssl_hello_type 1 }\n' +
 			'acl is_ssl req.ssl_ver 2:3.4\n' +
 			'use_backend ' +' redirect_to_' + freePort + '_in' + ' if is_ssl\n' +
-			'use_backend ' + tcp_backend + ' if !is_ssl\n' +
+			'use_backend backend_' + tcp_backend + ' if !is_ssl\n' +
 			'\n' +
 			'backend redirect_to_' + freePort + '_in\n' +
 			'mode tcp\n' +
@@ -216,7 +222,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 	else{
 		confStr +=
 			'\nfrontend https_'+port+'_in\n' +
-			'mode https\n' +
+			'mode http\n' +
 			'bind *:'+ port + ' ssl crt ' + crtPath + ' \n' +
 			'reqadd X-Forwarded-Proto:\\ https\n'
 
@@ -279,7 +285,7 @@ const generate = (configPath, configOutputPath, certOutputPath) => {
 						configurationString += generateHttpConfig(configuration, port)
 					}
 					else if (proto === 'https'){
-						configurationString += generateHttpsConfig(configuration, port)
+						configurationString += generateHttpsConfig(configuration, port, certOutputPath)
 					}
 				})
 			})

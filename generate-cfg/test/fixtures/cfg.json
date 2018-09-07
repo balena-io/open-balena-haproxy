@@ -1,0 +1,143 @@
+[
+  {
+    "backend": "http:admin:80",
+    "frontend": "http:admin.resindev.io:80"
+  },
+  {
+    "backend": "http:api:80",
+    "frontend": "http:api.resindev.io:80"
+  },
+  {
+    "backend": "http:builder:80",
+    "frontend": "http:builder.resindev.io:80"
+  },
+  {
+    "backend": "http:delta:80",
+    "frontend": "http:delta.resindev.io:80"
+  },
+  {
+    "backend": "http:devices:80",
+    "frontend": "http:devices.resindev.io:80"
+  },
+  {
+    "backend": "http:git:80",
+    "frontend": "http:git.resindev.io:80"
+  },
+  {
+    "backend": "http:img:80",
+    "frontend": "http:img.resindev.io:80"
+  },
+  {
+    "backend": "http:registry:80",
+    "frontend": "http:registry.resindev.io:80"
+  },
+  {
+    "backend": "http:registry2:80",
+    "frontend": "http:registry2.resindev.io:80"
+  },
+  {
+    "backend": "http:s3:80",
+    "frontend": "http:s3.resindev.io:80"
+  },
+  {
+    "backend": "http:ui:80",
+    "frontend": "http:dashboard.resindev.io:80"
+  },
+  {
+    "backend": "http:sentry:80",
+    "frontend": "http:sentry.resindev.io:80"
+  },
+  {
+    "backend": "http:vpn:80",
+    "frontend": "http:vpn.resindev.io:80"
+  },
+  {
+    "backend": "http:admin:80",
+    "frontend": "https:admin.resindev.io:443",
+	"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:api:80",
+    "frontend": "https:api.resindev.io:443",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:builder:80",
+    "frontend": "https:builder.resindev.io:443",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:delta:80",
+    "frontend": "https:delta.resindev.io:443",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:devices:80",
+    "frontend": "https:devices.resindev.io:443",
+	"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+},
+  {
+    "backend": "http:git:80",
+    "frontend": "https:git.resindev.io:443",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:img:80",
+    "frontend": "https:img.resindev.io:443",
+	"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:registry:80",
+    "frontend": "https:registry.resindev.io:443",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:registry2:80",
+    "frontend": "https:registry2.resindev.io:443",
+	"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:s3:80",
+    "frontend": "https:s3.resindev.io:443",
+	"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:ui:80",
+    "frontend": "https:dashboard.resindev.io:443",
+	"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "http:sentry:80",
+    "frontend": "https:sentry.resindev.io:443",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+  "backend": "http:registry2:81",
+  "frontend": "https:registry2.resindev.io:445",
+    "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+  },
+  {
+    "backend": "tcp:vpn:443",
+    "frontend": "tcp:vpn.resindev.io:443"
+  },
+  {
+    "backend": "tcp:devices:2222",
+    "frontend": "tcp:*:222",
+    "timeoutClient": "1h"
+  },
+  {
+    "backend": "tcp:git:22",
+    "frontend": "tcp:*:2222",
+    "timeoutClient": "1h"
+  },
+  {
+    "backend": "tcp:db:5432",
+    "frontend": "tcp:*:5432",
+    "timeoutClient": "1h"
+  },
+  {
+    "backend": "tcp:redis:6379",
+    "frontend": "tcp:*:6379",
+    "timeoutClient": "1h"
+  }
+]
