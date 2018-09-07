@@ -1,15 +1,8 @@
-#!/usr/bin/env node
 'use strict'
 
 const _ = require('lodash')
 const Promise = require('bluebird')
 const { readFileAsync, writeFileAsync} = Promise.promisifyAll(require('fs'))
-
-/**
- * File path holding certificates.
- * @type {string}
- */
-let crtPath = '/etc/ssl/private/haproxy.cert.chain.pem'
 
 /**
  * Certificate chain string
@@ -52,7 +45,7 @@ let configurationString =
  * HAProxy back-end configuration string.
  * @type {string}
  */
-let configurationBackendStr = ""
+let configurationBackendStr = ''
 
 
 /**
@@ -100,13 +93,12 @@ const getFreePort = (configuration, minPort, maxPort, reserved) => {
  * @returns {string} HAProxy back-ends configuration
  */
 const generateBackendConfig = (configuration) => {
-	// console.error(JSON.stringify(configuration,null,2))
 	let confStr = ''
 	_.forEach(configuration['backend'], be => {
 		confStr += '\n' +
 			'backend backend_' + be.backend + '_' + be.proto + '_' + be.port + '\n' +
 			'mode ' + be.proto + '\n'
-		if (be.mode === 'http')
+		if (be.proto === 'http')
 			confStr +=
 				'option forwardfor\n' +
 				'balance roundrobin\n'
@@ -183,7 +175,7 @@ const generateHttpConfig = (configuration, port) => {
  * @param port: Port to generate https configuration for
  * @returns {string} HAProxy front-end configuration for specified port.
  */
-const generateHttpsConfig = (configuration, port) => {
+const generateHttpsConfig = (configuration, port, crtPath) => {
 
 	let confStr=''
 
@@ -247,57 +239,60 @@ const updateCertChain = (chain, cert) => {
 }
 
 // Populate configuration internal representation from input
-loadFromFile('cfg.json').then((cfg) => {
-	_.forEach(cfg, (value) => {
+const generate = (configPath, configOutputPath, certOutputPath) => {
+	return loadFromFile(configPath).then((cfg) => {
+		_.forEach(cfg, (value) => {
 
-		// Decompose synthetic proto:domain:port objects.
-		let [proto, domain, port] = _.split(value['frontend'],':')
-		let [backend_proto, backend, backend_port] = _.split(value['backend'],':')
-		let backend_name = backend+ '_' + backend_proto + '_' + backend_port
-		if (_.get(configuration['frontend'], proto)){
-			configuration['frontend'][proto][port] =
-				_.get(configuration['frontend'][proto], port) ?
-					configuration['frontend'][proto][port].concat([{domain: domain, backend_name:backend_name}]) :
-					[{domain: domain, backend_name:backend_name}]
-		}
-		else {
-			configuration['frontend'][proto] = {[port]: [{domain: domain, backend_name:backend_name}]}
-		}
-
-		if (_.get(value, 'crt'))chain = updateCertChain(chain, value['crt'])
-
-		if (!_.get(configuration['backend'], backend_name)){
-			configuration['backend'][backend_name] = {
-				proto: backend_proto,
-				port: backend_port,
-				backend: backend
+			// Decompose synthetic proto:domain:port objects.
+			let [proto, domain, port] = _.split(value['frontend'],':')
+			let [backend_proto, backend, backend_port] = _.split(value['backend'],':')
+			let backend_name = backend+ '_' + backend_proto + '_' + backend_port
+			if (_.get(configuration['frontend'], proto)){
+				configuration['frontend'][proto][port] =
+					_.get(configuration['frontend'][proto], port) ?
+						configuration['frontend'][proto][port].concat([{domain: domain, backend_name:backend_name}]) :
+						[{domain: domain, backend_name:backend_name}]
 			}
-		}
-	})
-})
-	// Generate HAProxy configuration segments.
-	.then(()=> {
-		_.forEach(configuration['frontend'], (protoValue, proto) => {
-			_.forEach(protoValue, (portValue, port) => {
-				if (proto === 'tcp'){
-					configurationString += generateTcpConfig(configuration, port)
+			else {
+				configuration['frontend'][proto] = {[port]: [{domain: domain, backend_name:backend_name}]}
+			}
+
+			if (_.get(value, 'crt'))chain = updateCertChain(chain, value['crt'])
+
+			if (!_.get(configuration['backend'], backend_name)){
+				configuration['backend'][backend_name] = {
+					proto: backend_proto,
+					port: backend_port,
+					backend: backend
 				}
-				else if (proto === 'http'){
-					configurationString += generateHttpConfig(configuration, port)
-				}
-				else if (proto === 'https'){
-					configurationString += generateHttpsConfig(configuration, port)
-				}
-			})
+			}
 		})
-		configurationBackendStr = generateBackendConfig(configuration)
 	})
-	// Store HAProxy configuration to file.
-	.then(() => {
-	  console.log(configurationString+configurationBackendStr)
-		return writeFileAsync('/tmp/output', configurationString+configurationBackendStr)
-	})
-	// Store Certificate chain to crtPath.
-	.then(() => {
-		return writeFileAsync(crtPath, chain)
-	})
+	// Generate HAProxy configuration segments.
+		.then(()=> {
+			_.forEach(configuration['frontend'], (protoValue, proto) => {
+				_.forEach(protoValue, (portValue, port) => {
+					if (proto === 'tcp'){
+						configurationString += generateTcpConfig(configuration, port)
+					}
+					else if (proto === 'http'){
+						configurationString += generateHttpConfig(configuration, port)
+					}
+					else if (proto === 'https'){
+						configurationString += generateHttpsConfig(configuration, port)
+					}
+				})
+			})
+			configurationBackendStr = generateBackendConfig(configuration)
+		})
+		// Store HAProxy configuration to file.
+		.then(() => {
+			return writeFileAsync(configOutputPath, configurationString+configurationBackendStr)
+		})
+		// Store Certificate chain to crtPath.
+		.then(() => {
+			return writeFileAsync(certOutputPath, chain)
+		})
+}
+
+module.exports.generateHaproxyConfig = generate
