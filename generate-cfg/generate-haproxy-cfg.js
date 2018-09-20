@@ -94,21 +94,23 @@ const getFreePort = (configuration, minPort, maxPort, reserved) => {
  */
 const generateBackendConfig = (configuration) => {
 	let confStr = ''
-	_.forEach(configuration['backend'], be => {
+	_.forEach(configuration['backend'], (backend, name) => {
 		confStr += '\n' +
-			'backend backend_' + be.backend + '_' + be.proto + '_' + be.port + '\n' +
-			'mode ' + be.proto + '\n'
-		if (be.proto === 'http')
+			'backend ' + name + '\n' +
+			'mode ' + backend[0].proto + '\n'
+		if (backend[0].proto === 'http')
 			confStr +=
 				'option forwardfor\n' +
 				'balance roundrobin\n'
-		if (be.port === '443') {
-			confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' send-proxy-v2 check-send-proxy port ' + be.port + '\n'
 
-		}
-		else{
-			confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' check port ' + be.port + '\n'
-		}
+		_.forEach(backend, be => {
+			if (be.port === '443') {
+				confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' send-proxy-v2 check-send-proxy port ' + be.port + '\n'
+			}
+			else{
+				confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' check port ' + be.port + '\n'
+			}
+		})
 	})
 	return confStr
 }
@@ -247,31 +249,49 @@ const updateCertChain = (chain, cert) => {
 // Populate configuration internal representation from input
 const generate = (configPath, configOutputPath, certOutputPath) => {
 	return loadFromFile(configPath).then((cfg) => {
-		_.forEach(cfg, (value) => {
+		_.forEach(cfg, (value, key) => {
 
-			// Decompose synthetic proto:domain:port objects.
-			let [proto, domain, port] = _.split(value['frontend'],':')
-			let [backend_proto, backend, backend_port] = _.split(value['backend'],':')
-			let backend_name = backend+ '_' + backend_proto + '_' + backend_port
-			if (_.get(configuration['frontend'], proto)){
-				configuration['frontend'][proto][port] =
-					_.get(configuration['frontend'][proto], port) ?
-						configuration['frontend'][proto][port].concat([{domain: domain, backend_name:backend_name}]) :
-						[{domain: domain, backend_name:backend_name}]
-			}
-			else {
-				configuration['frontend'][proto] = {[port]: [{domain: domain, backend_name:backend_name}]}
-			}
-
-			if (_.get(value, 'crt'))chain = updateCertChain(chain, value['crt'])
-
-			if (!_.get(configuration['backend'], backend_name)){
-				configuration['backend'][backend_name] = {
-					proto: backend_proto,
-					port: backend_port,
-					backend: backend
+			let backend_name = key + '_backend'
+			_.forEach (value['frontend'], frontend => {
+				// Decompose synthetic proto:domain:port objects.
+				let [proto, domain, port] = _.split(frontend['url'],':')
+				domain = domain.replace(/^\/\//g, '')
+				if (_.get(configuration['frontend'], proto)){
+					configuration['frontend'][proto][port] =
+						_.get(configuration['frontend'][proto], port) ?
+							configuration['frontend'][proto][port].concat([{domain: domain, backend_name:backend_name}]) :
+							[{domain: domain, backend_name:backend_name}]
 				}
-			}
+				else {
+					configuration['frontend'][proto] = {[port]: [{domain: domain, backend_name:backend_name}]}
+				}
+				if (_.get(frontend, 'crt'))chain = updateCertChain(chain, frontend['crt'])
+			})
+
+			_.forEach (value['backend'], backend=> {
+				let [backend_proto, domain, backend_port] = _.split(backend['url'], ':')
+				domain = domain.replace(/^\/\//g, '')
+				if (!_.get(configuration['backend'], backend_name)) {
+					configuration['backend'][backend_name] = [{
+						proto: backend_proto,
+						port: backend_port,
+						backend: domain
+					}]
+				}
+				else {
+					if (!_.filter(configuration['backend'][backend_name], i =>
+						i.proto === backend_proto &&
+						i.port === backend_port &&
+						i.backend === domain).length) {
+						configuration['backend'][backend_name] = configuration['backend'][backend_name].concat({
+							proto: backend_proto,
+							port: backend_port,
+							backend: domain
+						})
+					}
+				}
+			})
+
 		})
 	})
 	// Generate HAProxy configuration segments.
