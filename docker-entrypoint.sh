@@ -14,6 +14,10 @@ if [ "$1" = 'haproxy' ]; then
 	set -- haproxy -W -db "$@"
 fi
 
-/usr/src/app/generate.js
+if [ "${PROXY_CONFIG}" ]; then
+  /usr/src/app/generate.js config -e PROXY_CONFIG
+else
+  /usr/src/app/generate.js config
+fi
 
 exec "$@"
