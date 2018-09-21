@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { readFileAsync, writeFileAsync} = Promise.promisifyAll(require('fs'))
+const { writeFileAsync} = Promise.promisifyAll(require('fs'))
 
 /**
  * Certificate chain string
@@ -46,17 +46,6 @@ let configurationString =
  * @type {string}
  */
 let configurationBackendStr = ''
-
-
-/**
- * Loads json object from file
- * @param filePath: Path to json file
- * @returns {Bluebird<object>}
- */
-const loadFromFile = (filePath) => {
-	return readFileAsync(filePath, 'utf8')
-		.then(JSON.parse)
-}
 
 
 /**
@@ -136,7 +125,7 @@ const generateTcpConfig = (configuration, port) => {
 			'mode tcp\n' +
 			'bind *:' + port + '\n'
 		_.forEach(configuration['frontend']['tcp'][port], acl => {
-			confStr += 'default_backend backend_' + acl.backend_name + '\n'
+			confStr += 'default_backend ' + acl.backend_name + '\n'
 		})
 	}
 	return confStr
@@ -165,7 +154,7 @@ const generateHttpConfig = (configuration, port) => {
 	_.forEach(configuration['frontend']['http'][port], acl => {
 		confStr  += '\n' +
 			'acl host_' + acl.backend_name  + ' hdr_dom(host) -i ' + acl.domain + '\n' +
-			'use_backend backend_' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
+			'use_backend ' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
 	})
 	return confStr
 }
@@ -200,8 +189,8 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 			'tcp-request inspect-delay 2s\n' +
 			'tcp-request content accept if { req.ssl_hello_type 1 }\n' +
 			'acl is_ssl req.ssl_ver 2:3.4\n' +
-			'use_backend ' +' redirect_to_' + freePort + '_in' + ' if is_ssl\n' +
-			'use_backend backend_' + tcp_backend + ' if !is_ssl\n' +
+			'use_backend ' + ' redirect_to_' + freePort + '_in' + ' if is_ssl\n' +
+			'use_backend ' + tcp_backend + ' if !is_ssl\n' +
 			'\n' +
 			'backend redirect_to_' + freePort + '_in\n' +
 			'mode tcp\n' +
@@ -218,7 +207,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 		_.forEach(configuration['frontend']['https'][port], acl => {
 			confStr += '\n' +
 				'acl host_' + acl.backend_name  + ' hdr_dom(host) -i ' + acl.domain + '\n' +
-				'use_backend backend_' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
+				'use_backend ' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
 		})
 	}
 	else{
@@ -231,7 +220,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 		_.forEach(configuration['frontend']['https'][port], acl => {
 			confStr += '\n' +
 				'acl host_' + acl.backend_name  + ' hdr_dom(host) -i ' + acl.domain + '\n' +
-				'use_backend backend_' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
+				'use_backend ' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
 		})
 	}
 
@@ -247,9 +236,9 @@ const updateCertChain = (chain, cert) => {
 }
 
 // Populate configuration internal representation from input
-const generate = (configPath, configOutputPath, certOutputPath) => {
-	return loadFromFile(configPath).then((cfg) => {
-		_.forEach(cfg, (value, key) => {
+const generate = (config, configOutputPath, certOutputPath) => {
+	return Promise.join().then(() => {
+		_.forEach(config, (value, key) => {
 
 			let backend_name = key + '_backend'
 			_.forEach (value['frontend'], frontend => {
@@ -259,7 +248,7 @@ const generate = (configPath, configOutputPath, certOutputPath) => {
 				if (_.get(configuration['frontend'], proto)){
 					configuration['frontend'][proto][port] =
 						_.get(configuration['frontend'][proto], port) ?
-							configuration['frontend'][proto][port].concat([{domain: domain, backend_name:backend_name}]) :
+							configuration['frontend'][proto][port].concat([{domain: domain, backend_name: backend_name}]) :
 							[{domain: domain, backend_name:backend_name}]
 				}
 				else {
