@@ -1,29 +1,29 @@
 {
- "name": "generate-haproxy-cfg",
- "version": "0.0.1",
- "description": "A tool for generating haproxy.cfg",
- "private": true,
- "scripts": {
-  "test": "nyc mocha"
- },
- "bin": {
-  "generate-haproxy-cfg": "./generate-haproxy-cfg"
- },
- "repository": {
-  "type": "git",
-  "url": "git+https://github.com/resin-io/balena-haproxy"
- },
- "author": "",
- "license": "Apache-2.0",
- "dependencies": {
-  "bluebird": "~3",
-  "capitano": "~1",
-  "lodash": "~4"
- },
- "devDependencies": {
-  "chai": "~4",
-  "mocha": "~5",
-  "mocha-eslint": "~4",
-  "nyc": "~12"
- }
+  "name": "generate-haproxy-cfg",
+  "version": "0.1.0",
+  "description": "A tool for generating haproxy.cfg",
+  "private": true,
+  "scripts": {
+    "test": "nyc mocha"
+  },
+  "bin": {
+    "generate-haproxy-cfg": "./generate-haproxy-cfg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/resin-io/balena-haproxy"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bluebird": "~3",
+    "capitano": "~1",
+    "lodash": "~4"
+  },
+  "devDependencies": {
+    "chai": "~4",
+    "mocha": "~5",
+    "mocha-eslint": "~4",
+    "nyc": "~12"
+  }
 }
