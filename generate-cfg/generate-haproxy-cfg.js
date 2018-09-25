@@ -2,7 +2,7 @@
 
 const _ = require('lodash')
 const Promise = require('bluebird')
-const { readFileAsync, writeFileAsync} = Promise.promisifyAll(require('fs'))
+const { writeFileAsync} = Promise.promisifyAll(require('fs'))
 
 /**
  * Certificate chain string
@@ -49,17 +49,6 @@ let configurationBackendStr = ''
 
 
 /**
- * Loads json object from file
- * @param filePath: Path to json file
- * @returns {Bluebird<object>}
- */
-const loadFromFile = (filePath) => {
-	return readFileAsync(filePath, 'utf8')
-		.then(JSON.parse)
-}
-
-
-/**
  * Returns a free port for some internal routing magic,
  * like using 443 for serving both tcp and https traffic to different back-ends
  * @param configuration: configuration object.
@@ -94,21 +83,23 @@ const getFreePort = (configuration, minPort, maxPort, reserved) => {
  */
 const generateBackendConfig = (configuration) => {
 	let confStr = ''
-	_.forEach(configuration['backend'], be => {
+	_.forEach(configuration['backend'], (backend, name) => {
 		confStr += '\n' +
-			'backend backend_' + be.backend + '_' + be.proto + '_' + be.port + '\n' +
-			'mode ' + be.proto + '\n'
-		if (be.proto === 'http')
+			'backend ' + name + '\n' +
+			'mode ' + backend[0].proto + '\n'
+		if (backend[0].proto === 'http')
 			confStr +=
 				'option forwardfor\n' +
 				'balance roundrobin\n'
-		if (be.port === '443') {
-			confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' send-proxy-v2 check-send-proxy port ' + be.port + '\n'
 
-		}
-		else{
-			confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' check port ' + be.port + '\n'
-		}
+		_.forEach(backend, be => {
+			if (be.port === '443') {
+				confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' send-proxy-v2 check-send-proxy port ' + be.port + '\n'
+			}
+			else{
+				confStr += 'server ' + be.backend + ' ' + be.backend + ':' + be.port + ' check port ' + be.port + '\n'
+			}
+		})
 	})
 	return confStr
 }
@@ -134,7 +125,7 @@ const generateTcpConfig = (configuration, port) => {
 			'mode tcp\n' +
 			'bind *:' + port + '\n'
 		_.forEach(configuration['frontend']['tcp'][port], acl => {
-			confStr += 'default_backend backend_' + acl.backend_name + '\n'
+			confStr += 'default_backend ' + acl.backend_name + '\n'
 		})
 	}
 	return confStr
@@ -163,7 +154,7 @@ const generateHttpConfig = (configuration, port) => {
 	_.forEach(configuration['frontend']['http'][port], acl => {
 		confStr  += '\n' +
 			'acl host_' + acl.backend_name  + ' hdr_dom(host) -i ' + acl.domain + '\n' +
-			'use_backend backend_' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
+			'use_backend ' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
 	})
 	return confStr
 }
@@ -198,8 +189,8 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 			'tcp-request inspect-delay 2s\n' +
 			'tcp-request content accept if { req.ssl_hello_type 1 }\n' +
 			'acl is_ssl req.ssl_ver 2:3.4\n' +
-			'use_backend ' +' redirect_to_' + freePort + '_in' + ' if is_ssl\n' +
-			'use_backend backend_' + tcp_backend + ' if !is_ssl\n' +
+			'use_backend ' + ' redirect_to_' + freePort + '_in' + ' if is_ssl\n' +
+			'use_backend ' + tcp_backend + ' if !is_ssl\n' +
 			'\n' +
 			'backend redirect_to_' + freePort + '_in\n' +
 			'mode tcp\n' +
@@ -216,7 +207,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 		_.forEach(configuration['frontend']['https'][port], acl => {
 			confStr += '\n' +
 				'acl host_' + acl.backend_name  + ' hdr_dom(host) -i ' + acl.domain + '\n' +
-				'use_backend backend_' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
+				'use_backend ' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
 		})
 	}
 	else{
@@ -229,7 +220,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 		_.forEach(configuration['frontend']['https'][port], acl => {
 			confStr += '\n' +
 				'acl host_' + acl.backend_name  + ' hdr_dom(host) -i ' + acl.domain + '\n' +
-				'use_backend backend_' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
+				'use_backend ' + acl.backend_name + ' if host_' + acl.backend_name + '\n'
 		})
 	}
 
@@ -245,33 +236,51 @@ const updateCertChain = (chain, cert) => {
 }
 
 // Populate configuration internal representation from input
-const generate = (configPath, configOutputPath, certOutputPath) => {
-	return loadFromFile(configPath).then((cfg) => {
-		_.forEach(cfg, (value) => {
+const generate = (config, configOutputPath, certOutputPath) => {
+	return Promise.join().then(() => {
+		_.forEach(config, (value, key) => {
 
-			// Decompose synthetic proto:domain:port objects.
-			let [proto, domain, port] = _.split(value['frontend'],':')
-			let [backend_proto, backend, backend_port] = _.split(value['backend'],':')
-			let backend_name = backend+ '_' + backend_proto + '_' + backend_port
-			if (_.get(configuration['frontend'], proto)){
-				configuration['frontend'][proto][port] =
-					_.get(configuration['frontend'][proto], port) ?
-						configuration['frontend'][proto][port].concat([{domain: domain, backend_name:backend_name}]) :
-						[{domain: domain, backend_name:backend_name}]
-			}
-			else {
-				configuration['frontend'][proto] = {[port]: [{domain: domain, backend_name:backend_name}]}
-			}
-
-			if (_.get(value, 'crt'))chain = updateCertChain(chain, value['crt'])
-
-			if (!_.get(configuration['backend'], backend_name)){
-				configuration['backend'][backend_name] = {
-					proto: backend_proto,
-					port: backend_port,
-					backend: backend
+			let backend_name = key + '_backend'
+			_.forEach (value['frontend'], frontend => {
+				// Decompose synthetic proto:domain:port objects.
+				let [proto, domain, port] = _.split(frontend['url'],':')
+				domain = domain.replace(/^\/\//g, '')
+				if (_.get(configuration['frontend'], proto)){
+					configuration['frontend'][proto][port] =
+						_.get(configuration['frontend'][proto], port) ?
+							configuration['frontend'][proto][port].concat([{domain: domain, backend_name: backend_name}]) :
+							[{domain: domain, backend_name:backend_name}]
 				}
-			}
+				else {
+					configuration['frontend'][proto] = {[port]: [{domain: domain, backend_name:backend_name}]}
+				}
+				if (_.get(frontend, 'crt'))chain = updateCertChain(chain, frontend['crt'])
+			})
+
+			_.forEach (value['backend'], backend=> {
+				let [backend_proto, domain, backend_port] = _.split(backend['url'], ':')
+				domain = domain.replace(/^\/\//g, '')
+				if (!_.get(configuration['backend'], backend_name)) {
+					configuration['backend'][backend_name] = [{
+						proto: backend_proto,
+						port: backend_port,
+						backend: domain
+					}]
+				}
+				else {
+					if (!_.filter(configuration['backend'][backend_name], i =>
+						i.proto === backend_proto &&
+						i.port === backend_port &&
+						i.backend === domain).length) {
+						configuration['backend'][backend_name] = configuration['backend'][backend_name].concat({
+							proto: backend_proto,
+							port: backend_port,
+							backend: domain
+						})
+					}
+				}
+			})
+
 		})
 	})
 	// Generate HAProxy configuration segments.

@@ -7,6 +7,10 @@ const loadFromFile = (filePath) => {
 	return readFileAsync(filePath, 'utf8')
 }
 
+const loadConfigFromFile = (filePath) => {
+	return readFileAsync(filePath, 'utf8')
+		.then(JSON.parse)
+}
 
 const assertFilesEqual = (path1, path2) => {
 	return loadFromFile(path1).then((obj1) => {
@@ -16,5 +20,6 @@ const assertFilesEqual = (path1, path2) => {
 	})
 }
 
+module.exports.loadConfigFromFile = loadConfigFromFile
 module.exports.assertFilesEqual = assertFilesEqual
 module.exports.loadFromFile = loadFromFile

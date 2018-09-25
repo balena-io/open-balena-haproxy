@@ -12,44 +12,8 @@ option forwardfor
 bind *:80
 reqadd X-Forwarded-Proto:\ http
 
-acl host_admin_http_80 hdr_dom(host) -i admin.resindev.io
-use_backend backend_admin_http_80 if host_admin_http_80
-
-acl host_api_http_80 hdr_dom(host) -i api.resindev.io
-use_backend backend_api_http_80 if host_api_http_80
-
-acl host_builder_http_80 hdr_dom(host) -i builder.resindev.io
-use_backend backend_builder_http_80 if host_builder_http_80
-
-acl host_delta_http_80 hdr_dom(host) -i delta.resindev.io
-use_backend backend_delta_http_80 if host_delta_http_80
-
-acl host_devices_http_80 hdr_dom(host) -i devices.resindev.io
-use_backend backend_devices_http_80 if host_devices_http_80
-
-acl host_git_http_80 hdr_dom(host) -i git.resindev.io
-use_backend backend_git_http_80 if host_git_http_80
-
-acl host_img_http_80 hdr_dom(host) -i img.resindev.io
-use_backend backend_img_http_80 if host_img_http_80
-
-acl host_registry_http_80 hdr_dom(host) -i registry.resindev.io
-use_backend backend_registry_http_80 if host_registry_http_80
-
-acl host_registry2_http_80 hdr_dom(host) -i registry2.resindev.io
-use_backend backend_registry2_http_80 if host_registry2_http_80
-
-acl host_s3_http_80 hdr_dom(host) -i s3.resindev.io
-use_backend backend_s3_http_80 if host_s3_http_80
-
-acl host_ui_http_80 hdr_dom(host) -i dashboard.resindev.io
-use_backend backend_ui_http_80 if host_ui_http_80
-
-acl host_sentry_http_80 hdr_dom(host) -i sentry.resindev.io
-use_backend backend_sentry_http_80 if host_sentry_http_80
-
-acl host_vpn_http_80 hdr_dom(host) -i vpn.resindev.io
-use_backend backend_vpn_http_80 if host_vpn_http_80
+acl host_admin-http_backend hdr_dom(host) -i admin.resindev.io
+use_backend admin-http_backend if host_admin-http_backend
 
 frontend https_443_in
 mode tcp
@@ -58,7 +22,7 @@ tcp-request inspect-delay 2s
 tcp-request content accept if { req.ssl_hello_type 1 }
 acl is_ssl req.ssl_ver 2:3.4
 use_backend  redirect_to_1000_in if is_ssl
-use_backend backend_vpn_tcp_443 if !is_ssl
+use_backend vpn_backend if !is_ssl
 
 backend redirect_to_1000_in
 mode tcp
@@ -71,170 +35,165 @@ option forwardfor
 bind 127.0.0.1:1000 ssl crt /tmp/chain.pem 
 reqadd X-Forwarded-Proto:\ https
 
-acl host_admin_http_80 hdr_dom(host) -i admin.resindev.io
-use_backend backend_admin_http_80 if host_admin_http_80
+acl host_admin_backend hdr_dom(host) -i admin.resindev.io
+use_backend admin_backend if host_admin_backend
 
-acl host_api_http_80 hdr_dom(host) -i api.resindev.io
-use_backend backend_api_http_80 if host_api_http_80
+acl host_api_backend hdr_dom(host) -i api.resindev.io
+use_backend api_backend if host_api_backend
 
-acl host_builder_http_80 hdr_dom(host) -i builder.resindev.io
-use_backend backend_builder_http_80 if host_builder_http_80
+acl host_api_backend hdr_dom(host) -i api.balenadev.io
+use_backend api_backend if host_api_backend
 
-acl host_delta_http_80 hdr_dom(host) -i delta.resindev.io
-use_backend backend_delta_http_80 if host_delta_http_80
+acl host_builder_backend hdr_dom(host) -i builder.resindev.io
+use_backend builder_backend if host_builder_backend
 
-acl host_devices_http_80 hdr_dom(host) -i devices.resindev.io
-use_backend backend_devices_http_80 if host_devices_http_80
+acl host_delta_backend hdr_dom(host) -i delta.resindev.io
+use_backend delta_backend if host_delta_backend
 
-acl host_git_http_80 hdr_dom(host) -i git.resindev.io
-use_backend backend_git_http_80 if host_git_http_80
+acl host_devices_backend hdr_dom(host) -i devices.resindev.io
+use_backend devices_backend if host_devices_backend
 
-acl host_img_http_80 hdr_dom(host) -i img.resindev.io
-use_backend backend_img_http_80 if host_img_http_80
+acl host_img_backend hdr_dom(host) -i img.resindev.io
+use_backend img_backend if host_img_backend
 
-acl host_registry_http_80 hdr_dom(host) -i registry.resindev.io
-use_backend backend_registry_http_80 if host_registry_http_80
+acl host_registry_backend hdr_dom(host) -i registry.resindev.io
+use_backend registry_backend if host_registry_backend
 
-acl host_registry2_http_80 hdr_dom(host) -i registry2.resindev.io
-use_backend backend_registry2_http_80 if host_registry2_http_80
+acl host_registry2_backend hdr_dom(host) -i registry2.resindev.io
+use_backend registry2_backend if host_registry2_backend
 
-acl host_s3_http_80 hdr_dom(host) -i s3.resindev.io
-use_backend backend_s3_http_80 if host_s3_http_80
+acl host_s3_backend hdr_dom(host) -i s3.resindev.io
+use_backend s3_backend if host_s3_backend
 
-acl host_ui_http_80 hdr_dom(host) -i dashboard.resindev.io
-use_backend backend_ui_http_80 if host_ui_http_80
+acl host_ui_backend hdr_dom(host) -i dashboard.resindev.io
+use_backend ui_backend if host_ui_backend
 
-acl host_sentry_http_80 hdr_dom(host) -i sentry.resindev.io
-use_backend backend_sentry_http_80 if host_sentry_http_80
+acl host_sentry_backend hdr_dom(host) -i sentry.resindev.io
+use_backend sentry_backend if host_sentry_backend
 
 frontend https_445_in
 mode http
 bind *:445 ssl crt /tmp/chain.pem 
 reqadd X-Forwarded-Proto:\ https
 
-acl host_registry2_http_81 hdr_dom(host) -i registry2.resindev.io
-use_backend backend_registry2_http_81 if host_registry2_http_81
+acl host_registry2-81_backend hdr_dom(host) -i registry2.resindev.io
+use_backend registry2-81_backend if host_registry2-81_backend
 
 frontend tcp_222_in
 mode tcp
 bind *:222
-default_backend backend_devices_tcp_2222
+default_backend devices-ssh_backend
 
 frontend tcp_2222_in
 mode tcp
 bind *:2222
-default_backend backend_git_tcp_22
+default_backend git_backend
 
 frontend tcp_5432_in
 mode tcp
 bind *:5432
-default_backend backend_db_tcp_5432
+default_backend db_backend
 
 frontend tcp_6379_in
 mode tcp
 bind *:6379
-default_backend backend_redis_tcp_6379
+default_backend redis_backend
 
-backend backend_admin_http_80
+backend admin-http_backend
 mode http
 option forwardfor
 balance roundrobin
 server admin admin:80 check port 80
 
-backend backend_api_http_80
+backend admin_backend
+mode http
+option forwardfor
+balance roundrobin
+server admin admin:80 check port 80
+
+backend api_backend
 mode http
 option forwardfor
 balance roundrobin
 server api api:80 check port 80
+server api2 api2:80 check port 80
 
-backend backend_builder_http_80
+backend builder_backend
 mode http
 option forwardfor
 balance roundrobin
 server builder builder:80 check port 80
 
-backend backend_delta_http_80
+backend delta_backend
 mode http
 option forwardfor
 balance roundrobin
 server delta delta:80 check port 80
 
-backend backend_devices_http_80
+backend devices_backend
 mode http
 option forwardfor
 balance roundrobin
 server devices devices:80 check port 80
 
-backend backend_git_http_80
-mode http
-option forwardfor
-balance roundrobin
-server git git:80 check port 80
-
-backend backend_img_http_80
+backend img_backend
 mode http
 option forwardfor
 balance roundrobin
 server img img:80 check port 80
 
-backend backend_registry_http_80
+backend registry_backend
 mode http
 option forwardfor
 balance roundrobin
 server registry registry:80 check port 80
 
-backend backend_registry2_http_80
+backend registry2_backend
 mode http
 option forwardfor
 balance roundrobin
 server registry2 registry2:80 check port 80
 
-backend backend_s3_http_80
+backend s3_backend
 mode http
 option forwardfor
 balance roundrobin
 server s3 s3:80 check port 80
 
-backend backend_ui_http_80
+backend ui_backend
 mode http
 option forwardfor
 balance roundrobin
 server ui ui:80 check port 80
 
-backend backend_sentry_http_80
+backend sentry_backend
 mode http
 option forwardfor
 balance roundrobin
 server sentry sentry:80 check port 80
 
-backend backend_vpn_http_80
-mode http
-option forwardfor
-balance roundrobin
-server vpn vpn:80 check port 80
-
-backend backend_registry2_http_81
+backend registry2-81_backend
 mode http
 option forwardfor
 balance roundrobin
 server registry2 registry2:81 check port 81
 
-backend backend_vpn_tcp_443
+backend vpn_backend
 mode tcp
 server vpn vpn:443 send-proxy-v2 check-send-proxy port 443
 
-backend backend_devices_tcp_2222
+backend devices-ssh_backend
 mode tcp
 server devices devices:2222 check port 2222
 
-backend backend_git_tcp_22
+backend git_backend
 mode tcp
 server git git:22 check port 22
 
-backend backend_db_tcp_5432
+backend db_backend
 mode tcp
 server db db:5432 check port 5432
 
-backend backend_redis_tcp_6379
+backend redis_backend
 mode tcp
 server redis redis:6379 check port 6379
