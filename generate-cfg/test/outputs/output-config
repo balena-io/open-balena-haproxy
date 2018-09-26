@@ -32,7 +32,7 @@ server localhost 127.0.0.1:1000 send-proxy-v2
 frontend 1000_in
 mode http
 option forwardfor
-bind 127.0.0.1:1000 ssl crt /tmp/chain.pem 
+bind 127.0.0.1:1000 ssl crt /tmp/chain.pem accept-proxy 
 reqadd X-Forwarded-Proto:\ https
 
 acl host_admin_backend hdr_dom(host) -i admin.resindev.io
