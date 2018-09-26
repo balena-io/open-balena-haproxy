@@ -200,7 +200,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 			'frontend ' +freePort + '_in\n' +
 			'mode http\n' +
 			'option forwardfor\n' +
-			'bind 127.0.0.1:' + freePort + ' ssl crt ' + crtPath + ' \n' +
+			'bind 127.0.0.1:' + freePort + ' ssl crt ' + crtPath + ' accept-proxy \n' +
 			'reqadd X-Forwarded-Proto:\\ https\n'
 
 
