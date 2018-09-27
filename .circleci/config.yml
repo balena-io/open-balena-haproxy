@@ -6,9 +6,8 @@ jobs:
       - image: library/docker:17
     working_directory: /tmp/build
     environment:
-      DOCKER_USERNAME: resindev
-      DOCKER_EMAIL: hello+hub-dev@resin.io
-      DOCKER_IMAGE: resindev/resin-haproxy
+      DOCKER_USERNAME: travisciresin
+      DOCKER_IMAGE: resin/balena-haproxy
     steps:
       - checkout
       - setup_remote_docker:
