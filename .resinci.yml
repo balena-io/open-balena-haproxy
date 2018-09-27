@@ -2,4 +2,4 @@ docker:
    builds:
     - path: .
       dockerfile: Dockerfile
-      docker_repo: resindev/resin-haproxy
+      docker_repo: resin/balena-haproxy
