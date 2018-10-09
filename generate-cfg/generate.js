@@ -1,6 +1,7 @@
 #!/usr/bin/env node
 
 const generateHaproxyConfig = require('./generate-haproxy-cfg').generateHaproxyConfig
+const restructureConfig = require('./restructureConfig')
 const capitano = require('capitano')
 const loadFromFile = require('./utils').loadFromFile
 
@@ -43,16 +44,25 @@ capitano.command({
 		parameter: 'outputConfig',
 		alias: [ 'c' ],
 		required: false
+	}, {
+		signature: 'bob',
+		parameter: 'bob',
+		alias: ['b'],
+		boolean: true
 	}],
 	action: (params, options) => {
 		const {
 			envvar,
 			file = '/.balena/config.json',
 			outputCert = '/etc/ssl/private/haproxy.cert.chain.pem',
-			outputConfig = '/usr/local/etc/haproxy/haproxy.cfg'
+			outputConfig = '/usr/local/etc/haproxy/haproxy.cfg',
+			bob=false
 		} = options
 		if (envvar && process.env[envvar]){
 			let config = JSON.parse(process.env[envvar])
+			if (bob){
+				config = restructureConfig(config)
+			}
 			return generateHaproxyConfig(
 				config,
 				outputConfig,
