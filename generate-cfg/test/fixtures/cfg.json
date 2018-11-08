@@ -7,7 +7,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "http://admin.resindev.io:80"
+		"protocol": "http",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "admin",
+		"port": "80"
 	  }
 	]
   },
@@ -19,7 +22,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://admin.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "admin",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -35,11 +41,17 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://api.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "api",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  },
 	  {
-		"url": "https://api.balenadev.io:443",
+		"protocol": "https",
+		"domain": "balenadev.io",
+		"subdomain": "api",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -52,7 +64,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://builder.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "builder",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -65,7 +80,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://delta.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "delta",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -78,7 +96,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://devices.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "devices",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -91,7 +112,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://img.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "img",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -104,7 +128,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://registry.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "registry",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -117,7 +144,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://registry2.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "registry2",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -130,7 +160,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://s3.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "s3",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -143,7 +176,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://dashboard.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "dashboard",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -156,7 +192,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://sentry.resindev.io:443",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "sentry",
+		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -169,7 +208,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "https://registry2.resindev.io:445",
+		"protocol": "https",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "registry2",
+		"port": "445",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
 	  }
 	]
@@ -182,7 +224,10 @@
 	],
 	"frontend": [
 	  {
-		"url": "tcp://vpn.resindev.io:443"
+		"protocol": "tcp",
+		"domain": "open-balena-haproxy.local",
+		"subdomain": "vpn",
+		"port": "443"
 	  }
 	]
   },
@@ -194,7 +239,9 @@
 	],
 	"frontend": [
 	  {
-		"url": "tcp://*:222"
+		"protocol": "tcp",
+		"domain": "*",
+		"port": "222"
 	  }
 	],
 	"cli_timeout": "1h"
@@ -207,7 +254,9 @@
 	],
 	"frontend": [
 	  {
-		"url": "tcp://*:2222"
+		"protocol": "tcp",
+		"domain": "*",
+		"port": "2222"
 	  }
 	],
 	"cli_timeout": "1h"
@@ -220,7 +269,9 @@
 	],
 	"frontend": [
 	  {
-		"url": "tcp://*:5432"
+		"protocol": "tcp",
+		"domain": "*",
+		"port": "5432"
 	  }
 	],
 	"cli_timeout": "1h"
@@ -233,7 +284,9 @@
 	],
 	"frontend": [
 	  {
-		"url": "tcp://*:6379"
+		"protocol": "tcp",
+		"domain": "*",
+		"port": "6379"
 	  }
 	],
 	"cli_timeout": "1h"

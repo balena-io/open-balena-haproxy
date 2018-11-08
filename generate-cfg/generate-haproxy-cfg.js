@@ -243,8 +243,11 @@ const generate = (config, configOutputPath, certOutputPath) => {
 			let backend_name = key + '_backend'
 			_.forEach (value['frontend'], frontend => {
 				// Decompose synthetic proto:domain:port objects.
-				let [proto, domain, port] = _.split(frontend['url'],':')
-				domain = domain.replace(/^\/\//g, '')
+				let proto = _.get(frontend,'protocol')
+				let subdomain = _.get(frontend,'subdomain')
+				let domain = subdomain ? subdomain + '.' + _.get(frontend,'domain') : _.get(frontend,'domain')
+				let port = _.get(frontend,'port')
+
 				if (_.get(configuration['frontend'], proto)){
 					configuration['frontend'][proto][port] =
 						_.get(configuration['frontend'][proto], port) ?

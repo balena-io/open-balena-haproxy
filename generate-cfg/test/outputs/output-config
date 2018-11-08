@@ -12,7 +12,7 @@ option forwardfor
 bind *:80
 reqadd X-Forwarded-Proto:\ http
 
-acl host_admin-http_backend hdr_dom(host) -i admin.resindev.io
+acl host_admin-http_backend hdr_dom(host) -i admin.open-balena-haproxy.local
 use_backend admin-http_backend if host_admin-http_backend
 
 frontend https_443_in
@@ -35,40 +35,40 @@ option forwardfor
 bind 127.0.0.1:1000 ssl crt /tmp/chain.pem accept-proxy 
 reqadd X-Forwarded-Proto:\ https
 
-acl host_admin_backend hdr_dom(host) -i admin.resindev.io
+acl host_admin_backend hdr_dom(host) -i admin.open-balena-haproxy.local
 use_backend admin_backend if host_admin_backend
 
-acl host_api_backend hdr_dom(host) -i api.resindev.io
+acl host_api_backend hdr_dom(host) -i api.open-balena-haproxy.local
 use_backend api_backend if host_api_backend
 
 acl host_api_backend hdr_dom(host) -i api.balenadev.io
 use_backend api_backend if host_api_backend
 
-acl host_builder_backend hdr_dom(host) -i builder.resindev.io
+acl host_builder_backend hdr_dom(host) -i builder.open-balena-haproxy.local
 use_backend builder_backend if host_builder_backend
 
-acl host_delta_backend hdr_dom(host) -i delta.resindev.io
+acl host_delta_backend hdr_dom(host) -i delta.open-balena-haproxy.local
 use_backend delta_backend if host_delta_backend
 
-acl host_devices_backend hdr_dom(host) -i devices.resindev.io
+acl host_devices_backend hdr_dom(host) -i devices.open-balena-haproxy.local
 use_backend devices_backend if host_devices_backend
 
-acl host_img_backend hdr_dom(host) -i img.resindev.io
+acl host_img_backend hdr_dom(host) -i img.open-balena-haproxy.local
 use_backend img_backend if host_img_backend
 
-acl host_registry_backend hdr_dom(host) -i registry.resindev.io
+acl host_registry_backend hdr_dom(host) -i registry.open-balena-haproxy.local
 use_backend registry_backend if host_registry_backend
 
-acl host_registry2_backend hdr_dom(host) -i registry2.resindev.io
+acl host_registry2_backend hdr_dom(host) -i registry2.open-balena-haproxy.local
 use_backend registry2_backend if host_registry2_backend
 
-acl host_s3_backend hdr_dom(host) -i s3.resindev.io
+acl host_s3_backend hdr_dom(host) -i s3.open-balena-haproxy.local
 use_backend s3_backend if host_s3_backend
 
-acl host_ui_backend hdr_dom(host) -i dashboard.resindev.io
+acl host_ui_backend hdr_dom(host) -i dashboard.open-balena-haproxy.local
 use_backend ui_backend if host_ui_backend
 
-acl host_sentry_backend hdr_dom(host) -i sentry.resindev.io
+acl host_sentry_backend hdr_dom(host) -i sentry.open-balena-haproxy.local
 use_backend sentry_backend if host_sentry_backend
 
 frontend https_445_in
@@ -76,7 +76,7 @@ mode http
 bind *:445 ssl crt /tmp/chain.pem 
 reqadd X-Forwarded-Proto:\ https
 
-acl host_registry2-81_backend hdr_dom(host) -i registry2.resindev.io
+acl host_registry2-81_backend hdr_dom(host) -i registry2.open-balena-haproxy.local
 use_backend registry2-81_backend if host_registry2-81_backend
 
 frontend tcp_222_in
