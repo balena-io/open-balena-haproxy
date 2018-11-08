@@ -8,7 +8,7 @@
 	"frontend": [
 	  {
 		"protocol": "http",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "admin",
 		"port": "80"
 	  }
@@ -23,7 +23,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "admin",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -42,7 +42,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "api",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -65,7 +65,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "builder",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -81,7 +81,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "delta",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -97,7 +97,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "devices",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -113,7 +113,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "img",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -129,7 +129,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "registry",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -145,7 +145,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "registry2",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -161,7 +161,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "s3",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -177,7 +177,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "dashboard",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -193,7 +193,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "sentry",
 		"port": "443",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -209,7 +209,7 @@
 	"frontend": [
 	  {
 		"protocol": "https",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "registry2",
 		"port": "445",
 		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
@@ -225,7 +225,7 @@
 	"frontend": [
 	  {
 		"protocol": "tcp",
-		"domain": "resindev.io",
+		"domain": "open-balena-haproxy.local",
 		"subdomain": "vpn",
 		"port": "443"
 	  }
