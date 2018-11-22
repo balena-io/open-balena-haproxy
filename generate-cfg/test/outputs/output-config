@@ -32,7 +32,7 @@ server localhost 127.0.0.1:1000 send-proxy-v2
 frontend 1000_in
 mode http
 option forwardfor
-bind 127.0.0.1:1000 ssl crt /tmp/chain.pem accept-proxy 
+bind 127.0.0.1:1000 ssl crt {{tmp}}/chain.pem accept-proxy
 reqadd X-Forwarded-Proto:\ https
 
 acl host_admin_backend hdr_dom(host) -i admin.open-balena-haproxy.local
@@ -73,7 +73,7 @@ use_backend sentry_backend if host_sentry_backend
 
 frontend https_445_in
 mode http
-bind *:445 ssl crt /tmp/chain.pem 
+bind *:445 ssl crt {{tmp}}/chain.pem
 reqadd X-Forwarded-Proto:\ https
 
 acl host_registry2-81_backend hdr_dom(host) -i registry2.open-balena-haproxy.local

@@ -1,1 +1,31 @@
-generate-cfg/package.json
+{
+  "name": "generate-haproxy-cfg",
+  "version": "1.0.1",
+  "description": "A tool for generating haproxy.cfg",
+  "private": true,
+  "scripts": {
+    "test": "nyc mocha generate-cfg/**/*.js"
+  },
+  "bin": {
+    "generate-haproxy-cfg": "./generate-haproxy-cfg"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/resin-io/balena-haproxy"
+  },
+  "author": "",
+  "license": "Apache-2.0",
+  "dependencies": {
+    "bluebird": "^3.5.3",
+    "capitano": "~1",
+    "lodash": "~4",
+    "temp": "^0.8.3"
+  },
+  "devDependencies": {
+    "app-root-path": "^2.1.0",
+    "chai": "~4",
+    "mocha": "~5",
+    "mocha-eslint": "~4",
+    "nyc": "~12"
+  }
+}
