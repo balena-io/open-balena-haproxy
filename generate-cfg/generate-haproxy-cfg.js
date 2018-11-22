@@ -200,7 +200,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 			'frontend ' +freePort + '_in\n' +
 			'mode http\n' +
 			'option forwardfor\n' +
-			'bind 127.0.0.1:' + freePort + ' ssl crt ' + crtPath + ' accept-proxy \n' +
+			'bind 127.0.0.1:' + freePort + ' ssl crt ' + crtPath + ' accept-proxy\n' +
 			'reqadd X-Forwarded-Proto:\\ https\n'
 
 
@@ -214,7 +214,7 @@ const generateHttpsConfig = (configuration, port, crtPath) => {
 		confStr +=
 			'\nfrontend https_'+port+'_in\n' +
 			'mode http\n' +
-			'bind *:'+ port + ' ssl crt ' + crtPath + ' \n' +
+			'bind *:'+ port + ' ssl crt ' + crtPath + '\n' +
 			'reqadd X-Forwarded-Proto:\\ https\n'
 
 		_.forEach(configuration['frontend']['https'][port], acl => {

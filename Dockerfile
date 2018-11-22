@@ -1,4 +1,4 @@
-FROM resin/resin-base:v4.2.2
+FROM balena/open-balena-base:v5.0.0
 
 ENV HAPROXY_MAJOR 1.8
 ENV HAPROXY_VERSION 1.8.13
@@ -51,11 +51,14 @@ RUN set -x \
 		| xargs -r apt-mark manual \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
-ADD generate-cfg /usr/src/app
-RUN npm install -g npm@5.6.0 \
-	&& npm install \
+WORKDIR /usr/src/app
+COPY package.json package-lock.json ./
+ADD generate-cfg generate-cfg
+
+RUN npm ci \
 	&& npm test \
 	&& npm prune --production
 COPY docker-entrypoint.sh /
+
 ENTRYPOINT ["/docker-entrypoint.sh"]
 CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
