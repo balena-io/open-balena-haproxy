@@ -52,13 +52,16 @@ RUN set -x \
 	&& apt-get purge -y --auto-remove -o APT::AutoRemove::RecommendsImportant=false
 
 WORKDIR /usr/src/app
-COPY package.json package-lock.json ./
-ADD generate-cfg generate-cfg
 
+# Copies the package.json first for better cache on later pushes
+COPY package.json package-lock.json ./
+
+# Install the config generator
+COPY . /usr/src/app
 RUN npm ci \
 	&& npm test \
 	&& npm prune --production
-COPY docker-entrypoint.sh /
 
-ENTRYPOINT ["/docker-entrypoint.sh"]
-CMD ["haproxy", "-f", "/usr/local/etc/haproxy/haproxy.cfg"]
+# Copy and enable the service
+COPY config/services /etc/systemd/system
+RUN systemctl enable balena-haproxy.service
