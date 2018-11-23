@@ -7,7 +7,7 @@
     "test": "nyc mocha generate-cfg/**/*.js"
   },
   "bin": {
-    "generate-haproxy-cfg": "./generate-haproxy-cfg"
+    "generate-haproxy-cfg": "./generate-cfg/generate-haproxy-cfg"
   },
   "repository": {
     "type": "git",
