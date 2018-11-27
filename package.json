@@ -4,10 +4,13 @@
   "description": "A tool for generating haproxy.cfg",
   "private": true,
   "scripts": {
-    "test": "nyc mocha generate-cfg/**/*.js"
+    "build": "tsc",
+    "prettify": "prettier --config ./node_modules/resin-lint/config/.prettierrc --write \"src/**/*.ts\" \"typings/**/*.ts\" \"test/**/*.ts\"",
+    "lint": "resin-lint --typescript src/ test/ && tsc --noEmit",
+    "test": "nyc mocha 'test/**/*.spec.ts'"
   },
   "bin": {
-    "generate-haproxy-cfg": "./generate-cfg/generate-haproxy-cfg"
+    "generate-haproxy-config": "./bin/generate-haproxy-config"
   },
   "repository": {
     "type": "git",
@@ -15,17 +18,47 @@
   },
   "author": "",
   "license": "Apache-2.0",
+  "nyc": {
+    "extension": [
+      ".ts"
+    ]
+  },
   "dependencies": {
     "bluebird": "^3.5.3",
-    "capitano": "~1",
-    "lodash": "~4",
+    "capitano": "^1.8.2",
+    "lodash": "^4.17.11",
     "temp": "^0.8.3"
   },
   "devDependencies": {
+    "@types/app-root-path": "^1.2.4",
+    "@types/bluebird": "^3.5.24",
+    "@types/chai-as-promised": "^7.1.0",
+    "@types/lodash": "^4.14.118",
+    "@types/mocha": "^5.2.5",
+    "@types/node": "^10.12.10",
+    "@types/temp": "^0.8.32",
     "app-root-path": "^2.1.0",
-    "chai": "~4",
-    "mocha": "~5",
-    "mocha-eslint": "~4",
-    "nyc": "~12"
+    "chai": "^4.2.0",
+    "chai-as-promised": "^7.1.1",
+    "husky": "^1.2.0",
+    "lint-staged": "^8.1.0",
+    "mocha": "^5.2.0",
+    "nyc": "^13.1.0",
+    "resin-lint": "^2.0.1",
+    "ts-node": "^7.0.1",
+    "typescript": "^3.1.6"
+  },
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run lint"
+    }
+  },
+  "lint-staged": {
+    "*.ts": [
+      "prettier --config ./node_modules/resin-lint/config/.prettierrc --write",
+      "resin-lint --typescript --no-prettier",
+      "git add"
+    ]
   }
 }
