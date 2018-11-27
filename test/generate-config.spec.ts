@@ -20,8 +20,8 @@ import * as chaiAsPromised from 'chai-as-promised';
 import 'mocha';
 import * as temp from 'temp';
 
-import { GenerateHaproxyConfig } from '../src/generate-haproxy-cfg';
-import { LoadConfigFromFile, LoadFromFile, ReplacePairs } from './testUtils';
+import { GenerateHaproxyConfig } from '../src/generate-config';
+import { LoadConfigFromFile, LoadFromFile, ReplacePairs } from './test-utils';
 
 // Ensure Chai is correctly initialised
 chai.use(chaiAsPromised);

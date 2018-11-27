@@ -17,7 +17,7 @@ import * as Bluebird from 'bluebird';
 import { readFile } from 'fs';
 import { URL } from 'url';
 
-import { Configuration } from '../src/generate-haproxy-cfg';
+import { Configuration } from '../src/generate-config';
 
 const readFileAsync: (
 	path: string | number | Buffer | URL,

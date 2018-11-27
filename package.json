@@ -10,7 +10,7 @@
     "test": "nyc mocha 'test/**/*.spec.ts'"
   },
   "bin": {
-    "generate-haproxy-config": "./bin/generate-haproxy-config"
+    "generate-haproxy-config": "./bin/generate-config"
   },
   "repository": {
     "type": "git",

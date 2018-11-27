@@ -31,21 +31,22 @@ export interface ServiceBackend {
 
 export interface ServiceFrontend {
 	protocol: string;
-	port: string;
+	port: number;
 	domain: string;
 	subdomain?: string;
 	crt?: string;
 }
 
+export interface ConfigurationEntry {
+	frontend: ServiceFrontend[];
+	backend: ServiceBackend[];
+}
+
 /**
  * Configuration object inteface. Holds an internal representation of input
- * @type {{frontend: {}, backend: {}}}
  */
 export interface Configuration {
-	[service: string]: {
-		frontend: ServiceFrontend[];
-		backend: ServiceBackend[];
-	};
+	[service: string]: ConfigurationEntry;
 }
 
 interface InternalConfig {
@@ -132,38 +133,23 @@ const getFreePort = (
  *   }
  * @returns {string} HAProxy back-ends configuration
  */
-const generateBackendConfig = (configuration: InternalConfig) => {
+const generateBackendConfig = (configuration: InternalConfig): string => {
 	let confStr = '';
 	_.forEach(configuration['backend'], (backend, name) => {
-		confStr +=
-			'\n' + 'backend ' + name + '\n' + 'mode ' + backend[0].proto + '\n';
+		confStr += `\nbackend ${name}\n` + `mode ${backend[0].proto}\n`;
 		if (backend[0].proto === 'http') {
 			confStr += 'option forwardfor\n' + 'balance roundrobin\n';
 		}
 
 		_.forEach(backend, be => {
 			if (be.port === '443') {
-				confStr +=
-					'server ' +
-					be.backend +
-					' ' +
-					be.backend +
-					':' +
-					be.port +
-					' send-proxy-v2 check-send-proxy port ' +
-					be.port +
-					'\n';
+				confStr += `server ${be.backend} ${be.backend}:${
+					be.port
+				} send-proxy-v2 check-send-proxy port ${be.port}\n`;
 			} else {
-				confStr +=
-					'server ' +
-					be.backend +
-					' ' +
-					be.backend +
-					':' +
-					be.port +
-					' check port ' +
-					be.port +
-					'\n';
+				confStr += `server ${be.backend} ${be.backend}:${be.port} check port ${
+					be.port
+				}\n`;
 			}
 		});
 	});
@@ -182,19 +168,16 @@ const generateBackendConfig = (configuration: InternalConfig) => {
  * @param port: Port to generate tcp configuration for
  * @returns {string} HAProxy front-end configuration for specified port.
  */
-const generateTcpConfig = (configuration: InternalConfig, port: number) => {
+const generateTcpConfig = (
+	configuration: InternalConfig,
+	port: number,
+): string => {
 	let confStr = '';
 	if (!_.get(configuration, ['frontend', 'https', port])) {
 		confStr +=
-			'\nfrontend tcp_' +
-			port +
-			'_in\n' +
-			'mode tcp\n' +
-			'bind *:' +
-			port +
-			'\n';
+			`\nfrontend tcp_${port}_in\n` + 'mode tcp\n' + `bind *:${port}\n`;
 		_.forEach(configuration['frontend']['tcp'][port], acl => {
-			confStr += 'default_backend ' + acl.backendName + '\n';
+			confStr += `default_backend ${acl.backendName}\n`;
 		});
 	}
 	return confStr;
@@ -212,30 +195,21 @@ const generateTcpConfig = (configuration: InternalConfig, port: number) => {
  * @param port: Port to generate http configuration for
  * @returns {string} HAProxy front-end configuration for specified port.
  */
-const generateHttpConfig = (configuration: InternalConfig, port: number) => {
+const generateHttpConfig = (
+	configuration: InternalConfig,
+	port: number,
+): string => {
 	let confStr =
-		'\nfrontend http_' +
-		port +
-		'_in\n' +
+		`\nfrontend http_${port}_in\n` +
 		'mode http\n' +
 		'option forwardfor\n' +
-		'bind *:' +
-		port +
-		'\n' +
+		`bind *:${port}\n` +
 		'reqadd X-Forwarded-Proto:\\ http\n';
 	_.forEach(configuration['frontend']['http'][port], acl => {
 		confStr +=
 			'\n' +
-			'acl host_' +
-			acl.backendName +
-			' hdr_dom(host) -i ' +
-			acl.domain +
-			'\n' +
-			'use_backend ' +
-			acl.backendName +
-			' if host_' +
-			acl.backendName +
-			'\n';
+			`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
+			`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
 	});
 	return confStr;
 };
@@ -256,7 +230,7 @@ const generateHttpsConfig = (
 	configuration: InternalConfig,
 	port: number,
 	crtPath: string,
-) => {
+): string => {
 	let confStr = '';
 
 	// In case the port is used for both https and tcp traffic:
@@ -273,87 +247,47 @@ const generateHttpsConfig = (
 		];
 
 		confStr +=
-			'\nfrontend https_' +
-			port +
-			'_in\n' +
+			`\nfrontend https_${port}_in\n` +
 			'mode tcp\n' +
-			'bind *:' +
-			port +
-			'\n' +
+			`bind *:${port}\n` +
 			'tcp-request inspect-delay 2s\n' +
 			'tcp-request content accept if { req.ssl_hello_type 1 }\n' +
 			'acl is_ssl req.ssl_ver 2:3.4\n' +
-			'use_backend ' +
-			' redirect_to_' +
-			freePort +
-			'_in' +
-			' if is_ssl\n' +
-			'use_backend ' +
-			tcpBackend +
-			' if !is_ssl\n' +
+			`use_backend redirect_to_${freePort}_in if is_ssl\n` +
+			`use_backend ${tcpBackend} if !is_ssl\n` +
 			'\n' +
-			'backend redirect_to_' +
-			freePort +
-			'_in\n' +
+			`backend redirect_to_${freePort}_in\n` +
 			'mode tcp\n' +
 			'balance roundrobin\n' +
-			'server localhost 127.0.0.1:' +
-			freePort +
-			' send-proxy-v2\n' +
+			`server localhost 127.0.0.1:${freePort} send-proxy-v2\n` +
 			'\n' +
-			'frontend ' +
-			freePort +
-			'_in\n' +
+			`frontend ${freePort}_in\n` +
 			'mode http\n' +
 			'option forwardfor\n' +
-			'bind 127.0.0.1:' +
-			freePort +
-			' ssl crt ' +
-			crtPath +
-			' accept-proxy\n' +
+			`bind 127.0.0.1:${freePort} ssl crt ${crtPath} accept-proxy\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
 
-		_.forEach(configuration['frontend']['https'][port], acl => {
-			confStr +=
+		confStr += _.map(configuration['frontend']['https'][port], acl => {
+			return (
 				'\n' +
-				'acl host_' +
-				acl.backendName +
-				' hdr_dom(host) -i ' +
-				acl.domain +
-				'\n' +
-				'use_backend ' +
-				acl.backendName +
-				' if host_' +
-				acl.backendName +
-				'\n';
-		});
+				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
+				`use_backend ${acl.backendName} if host_${acl.backendName}\n`
+			);
+		}).join('');
 	} else {
 		confStr +=
-			'\nfrontend https_' +
-			port +
-			'_in\n' +
+			`\nfrontend https_${port}_in\n` +
 			'mode http\n' +
-			'bind *:' +
-			port +
-			' ssl crt ' +
-			crtPath +
-			'\n' +
+			`bind *:${port} ssl crt ${crtPath}\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
 
-		_.forEach(configuration['frontend']['https'][port], acl => {
-			confStr +=
+		confStr += _.map(configuration['frontend']['https'][port], acl => {
+			return (
 				'\n' +
-				'acl host_' +
-				acl.backendName +
-				' hdr_dom(host) -i ' +
-				acl.domain +
-				'\n' +
-				'use_backend ' +
-				acl.backendName +
-				' if host_' +
-				acl.backendName +
-				'\n';
-		});
+				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
+				`use_backend ${acl.backendName} if host_${acl.backendName}\n`
+			);
+		}).join('');
 	}
 
 	return confStr;
@@ -371,80 +305,72 @@ export function GenerateHaproxyConfig(
 	config: Configuration,
 	configOutputPath: string,
 	certOutputPath: string,
-) {
+): Bluebird<{}> {
 	return (
-		Bluebird.join()
-			.then(() => {
-				_.forEach(config, (value, key) => {
-					let backendName = key + '_backend';
-					_.forEach(value['frontend'], frontend => {
-						// Decompose synthetic proto:domain:port objects.
-						let proto = _.get(frontend, 'protocol');
-						let subdomain = _.get(frontend, 'subdomain');
-						let domain = subdomain
-							? subdomain + '.' + _.get(frontend, 'domain')
-							: _.get(frontend, 'domain');
-						let port = _.get(frontend, 'port');
+		Bluebird.map(_.toPairs(config), ([key, value]) => {
+			let backendName = key + '_backend';
+			_.forEach(value['frontend'], frontend => {
+				// Decompose synthetic proto:domain:port objects.
+				let proto = _.get(frontend, 'protocol');
+				let subdomain = _.get(frontend, 'subdomain');
+				let domain = subdomain
+					? subdomain + '.' + _.get(frontend, 'domain')
+					: _.get(frontend, 'domain');
+				let port = _.get(frontend, 'port');
 
-						if (_.get(configuration['frontend'], proto)) {
-							if (_.get(configuration['frontend'][proto], port)) {
-								configuration['frontend'][proto][port] = configuration[
-									'frontend'
-								][proto][port].concat([
-									{ domain: domain, backendName: backendName },
-								]);
-							} else {
-								configuration['frontend'][proto][port] = [
-									{ domain: domain, backendName: backendName },
-								];
-							}
-						} else {
-							configuration['frontend'][proto] = {
-								[port]: [{ domain: domain, backendName: backendName }],
-							};
-						}
-						const frontendCrt = _.get(frontend, 'crt');
-						if (frontendCrt) {
-							chain = updateCertChain(chain, frontendCrt);
-						}
-					});
+				if (_.get(configuration['frontend'], proto)) {
+					if (_.get(configuration['frontend'][proto], port)) {
+						configuration['frontend'][proto][port] = configuration['frontend'][
+							proto
+						][port].concat([{ domain: domain, backendName: backendName }]);
+					} else {
+						configuration['frontend'][proto][port] = [
+							{ domain: domain, backendName: backendName },
+						];
+					}
+				} else {
+					configuration['frontend'][proto] = {
+						[port]: [{ domain: domain, backendName: backendName }],
+					};
+				}
+				const frontendCrt = _.get(frontend, 'crt');
+				if (frontendCrt) {
+					chain = updateCertChain(chain, frontendCrt);
+				}
+			});
 
-					_.forEach(value['backend'], backend => {
-						let [backendProto, domain, backendPort] = _.split(
-							backend['url'],
-							':',
-						);
-						domain = domain.replace(/^\/\//g, '');
-						if (!_.get(configuration['backend'], backendName)) {
-							configuration['backend'][backendName] = [
-								{
-									proto: backendProto,
-									port: backendPort,
-									backend: domain,
-								},
-							];
-						} else {
-							if (
-								!_.filter(
-									configuration['backend'][backendName],
-									i =>
-										i.proto === backendProto &&
-										i.port === backendPort &&
-										i.backend === domain,
-								).length
-							) {
-								configuration['backend'][backendName] = configuration[
-									'backend'
-								][backendName].concat({
-									proto: backendProto,
-									port: backendPort,
-									backend: domain,
-								});
-							}
-						}
-					});
-				});
-			})
+			_.forEach(value['backend'], backend => {
+				let [backendProto, domain, backendPort] = _.split(backend['url'], ':');
+				domain = domain.replace(/^\/\//g, '');
+				if (!_.get(configuration['backend'], backendName)) {
+					configuration['backend'][backendName] = [
+						{
+							proto: backendProto,
+							port: backendPort,
+							backend: domain,
+						},
+					];
+				} else {
+					if (
+						!_.filter(
+							configuration['backend'][backendName],
+							i =>
+								i.proto === backendProto &&
+								i.port === backendPort &&
+								i.backend === domain,
+						).length
+					) {
+						configuration['backend'][backendName] = configuration['backend'][
+							backendName
+						].concat({
+							proto: backendProto,
+							port: backendPort,
+							backend: domain,
+						});
+					}
+				}
+			});
+		})
 			// Generate HAProxy configuration segments.
 			.then(() => {
 				_.forEach(configuration['frontend'], (protoValue, proto) => {

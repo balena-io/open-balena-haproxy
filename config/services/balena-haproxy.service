@@ -8,7 +8,7 @@ StandardOutput=journal+console
 StandardError=journal+console
 WorkingDirectory=/usr/src/app
 EnvironmentFile=/usr/src/app/config/env
-ExecStartPre=/usr/src/app/bin/generate-haproxy-config config -e PROXY_CONFIG
+ExecStartPre=/usr/src/app/bin/generate-config config -e PROXY_CONFIG
 ExecStart=/usr/local/sbin/haproxy -f /usr/local/etc/haproxy/haproxy.cfg
 Restart=always
 

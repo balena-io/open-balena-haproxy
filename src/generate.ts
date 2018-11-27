@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { GenerateHaproxyConfig } from './generate-haproxy-cfg';
+import { GenerateHaproxyConfig } from './generate-config';
 import { LoadFromFile } from './utils';
 const capitano = require('capitano');
 
@@ -24,7 +24,7 @@ const help = () => {
 
 	for (let command of capitano.state.commands) {
 		if (command.isWildcard()) continue;
-		console.log(`\t${command.signature}\t\t\t${command.description}`);
+		console.log(`\t${command.signature}\t${command.description}`);
 	}
 };
 
@@ -51,14 +51,14 @@ capitano.command({
 			required: false,
 		},
 		{
-			signature: 'outputCert',
-			parameter: 'outputCert',
+			signature: 'output-cert',
+			parameter: 'output-cert',
 			alias: ['p'],
 			required: false,
 		},
 		{
-			signature: 'outputConfig',
-			parameter: 'outputConfig',
+			signature: 'output-config',
+			parameter: 'output-config',
 			alias: ['c'],
 			required: false,
 		},
@@ -88,6 +88,6 @@ capitano.run(process.argv, (err: Error) => {
 	if (err != null) {
 		help();
 		console.error(err.stack);
-		process.exit(1);
+		process.exitCode = 1;
 	}
 });
