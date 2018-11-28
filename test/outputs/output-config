@@ -21,7 +21,7 @@ bind *:443
 tcp-request inspect-delay 2s
 tcp-request content accept if { req.ssl_hello_type 1 }
 acl is_ssl req.ssl_ver 2:3.4
-use_backend  redirect_to_1000_in if is_ssl
+use_backend redirect_to_1000_in if is_ssl
 use_backend vpn_backend if !is_ssl
 
 backend redirect_to_1000_in
