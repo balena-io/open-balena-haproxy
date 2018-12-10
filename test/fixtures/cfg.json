@@ -26,7 +26,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "admin",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -45,14 +45,14 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "api",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  },
 	  {
 		"protocol": "https",
 		"domain": "balenadev.io",
 		"subdomain": "api",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -68,7 +68,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "builder",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -84,7 +84,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "delta",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -100,7 +100,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "devices",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -116,7 +116,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "img",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -132,7 +132,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "registry",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -148,7 +148,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "registry2",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -164,7 +164,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "s3",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -180,7 +180,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "dashboard",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -196,7 +196,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "sentry",
 		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },
@@ -212,7 +212,7 @@
 		"domain": "open-balena-haproxy.local",
 		"subdomain": "registry2",
 		"port": "445",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+		"crt": "LS0tLS1CRUdJTiBDRVJUSUZJQ0FURS0tLS0tCi0tLS0tRU5EIENFUlRJRklDQVRFLS0tLS0K"
 	  }
 	]
   },

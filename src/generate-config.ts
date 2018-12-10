@@ -294,6 +294,7 @@ const generateHttpsConfig = (
 };
 
 const updateCertChain = (chain: string, cert: string): string => {
+	cert = Buffer.from(cert, 'base64').toString();
 	if (!chain.includes(cert)) {
 		chain += cert;
 	}
