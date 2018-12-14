@@ -57,9 +57,11 @@ WORKDIR /usr/src/app
 COPY package.json package-lock.json ./
 
 # Install the config generator
+RUN npm ci
+
 COPY . /usr/src/app
-RUN npm ci \
-	&& npm run build \
+
+RUN npm run build \
 	&& npm test \
 	&& npm prune --production
 
