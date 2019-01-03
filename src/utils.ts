@@ -131,10 +131,19 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	// Determine if the certificate already exists by checking the config directories
 	// and looking for a relevant certificate for this UUID. If it does exist,
 	// we need to renew instead of requesting a new certificate.
+	const fileMap: CertificateResult = {
+		certificate: 'certificate',
+		ca: 'ca',
+		privateKey: 'private-key',
+	};
 	try {
-		await Bluebird.map(['certificate.pem', 'ca.pem', 'private-key.pem'], file =>
-			mzfs.access(`${domainCertDir}${sep}${file}`),
-		).catch({ code: 'ENOENT' }, () => (renewing = false));
+		await Bluebird.props(
+			_.mapValues(fileMap, file =>
+				mzfs.access(`${domainCertDir}${sep}${file}`),
+			),
+		).catch({ code: 'ENOENT' }, () => {
+			renewing = false;
+		});
 	} catch (err) {
 		throw new Error('Could not determine if certificate files pre-exist');
 	}
@@ -160,11 +169,6 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	// We load the certificates from the config volume and use those instead,
 	// storing into a local object first. This can then be used by the rest
 	// of the system.
-	const fileMap: CertificateResult = {
-		certificate: 'certificate',
-		ca: 'ca',
-		privateKey: 'private-key',
-	};
 	if (!certResults) {
 		try {
 			certResults = await Bluebird.props(
