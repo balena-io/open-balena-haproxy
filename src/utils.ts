@@ -73,7 +73,6 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	const configRoot = process.env.CERT_SERVICE_DIR;
 	const domainCertDir = `${configRoot}/${domain}`;
 	let renewing = true;
-	let ip: string | undefined;
 
 	// Need to ensure we have everything before contacting the service.
 	if (!authToken) {
@@ -90,7 +89,7 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 
 	// Either use the given static IP address in the envvars, or try and determine
 	// it from the balena device itself.
-	ip = process.env.STATIC_DNS_IP;
+	let ip = process.env.STATIC_DNS_IP;
 	if (!ip) {
 		let deviceDetails: DeviceDetails;
 		try {
@@ -107,7 +106,6 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 			);
 		}
 
-		console.log(deviceDetails);
 		ip = deviceDetails.ip_address;
 	}
 
@@ -127,17 +125,11 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	// and looking for a relevant certificate for this UUID. If it does exist,
 	// we need to renew instead of requesting a new certificate.
 	try {
-		await Bluebird.map(
-			['certificate.pem', 'ca.pem', 'private-key.pem'],
-			async file => {
-				await mzfs.access(`${domainCertDir}${sep}${file}`);
-			},
-		);
+		await Bluebird.map(['certificate.pem', 'ca.pem', 'private-key.pem'], file =>
+			mzfs.access(`${domainCertDir}${sep}${file}`),
+		).catch({ code: 'ENOENT' }, () => (renewing = false));
 	} catch (err) {
-		if (err.code !== 'ENOENT') {
-			throw new Error('Could not determine if certificate files pre-exist');
-		}
-		renewing = false;
+		throw new Error('Could not determine if certificate files pre-exist');
 	}
 
 	// Attempt to retrieve new certificates from the service.
@@ -162,17 +154,17 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	// We load the certificates from the config volume and use those instead,
 	// storing into a local object first. This can then be used by the rest
 	// of the system.
-	const fileMap = new Map<string, string>([
+	const fileMap = new Map<keyof CertificateResult, string>([
 		['certificate', 'certificate'],
 		['ca', 'ca'],
-		['private-key', 'privateKey'],
+		['privateKey', 'private-key'],
 	]);
 	if (!certResults) {
-		let fileResults: any = {};
+		let fileResults: Partial<CertificateResult> = {};
 		try {
 			await Bluebird.map(fileMap, async entry => {
-				const file = entry[0];
-				const key = entry[1];
+				const key = entry[0];
+				const file = entry[1];
 
 				fileResults[key] = await mzfs.readFile(
 					`${domainCertDir}${sep}${file}.pem`,

@@ -287,9 +287,8 @@ const generateHttpsConfig = (
 	return confStr;
 };
 
-const updateCertChain = (chain: string, cert: string): string => {
-	return !chain.includes(cert) ? chain.concat(cert) : chain;
-};
+const updateCertChain = (chain: string, cert: string): string =>
+	chain.includes(cert) ? chain : chain.concat(cert);
 
 // Populate configuration internal representation from input
 export async function GenerateHaproxyConfig(
@@ -302,9 +301,8 @@ export async function GenerateHaproxyConfig(
 		process.env.DOMAIN_INC_UUID === 'true'
 			? `${process.env.BALENA_DEVICE_UUID}.`
 			: '';
-	const generateCerts =
-		process.env.AUTOGENERATE_CERTS === 'true' ? true : false;
-	let certificateGenerator: Promise<string | void> = Promise.resolve();
+	const generateCerts = process.env.AUTOGENERATE_CERTS === 'true';
+	let certificateGenerator: Promise<string> | undefined;
 
 	await Bluebird.map(_.toPairs(config), async ([key, value]) => {
 		const backendName = key + '_backend';
@@ -364,7 +362,7 @@ export async function GenerateHaproxyConfig(
 		_.forEach(value['backend'], backend => {
 			let [backendProto, domain, backendPort] = _.split(backend['url'], ':');
 			domain = domain.replace(/^\/\//g, '');
-			if (!_.get(configuration['backend'], backendName)) {
+			if (!_.has(configuration['backend'], backendName)) {
 				configuration['backend'][backendName] = [
 					{
 						proto: backendProto,
@@ -374,13 +372,13 @@ export async function GenerateHaproxyConfig(
 				];
 			} else {
 				if (
-					!_.filter(
+					!_.some(
 						configuration['backend'][backendName],
 						i =>
 							i.proto === backendProto &&
 							i.port === backendPort &&
 							i.backend === domain,
-					).length
+					)
 				) {
 					configuration['backend'][backendName] = configuration['backend'][
 						backendName
