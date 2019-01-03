@@ -304,9 +304,9 @@ export async function GenerateHaproxyConfig(
 	const generateCerts = process.env.AUTOGENERATE_CERTS === 'true';
 	let certificateGenerator: Promise<string> | undefined;
 
-	await Bluebird.map(_.toPairs(config), async ([key, value]) => {
+	await Bluebird.map(_.toPairs(config), ([key, value]) => {
 		const backendName = key + '_backend';
-		_.forEach(value['frontend'], async frontend => {
+		_.forEach(value['frontend'], frontend => {
 			// Decompose synthetic proto:domain:port objects.
 			const proto = _.get(frontend, 'protocol');
 			const subdomain = _.get(frontend, 'subdomain');

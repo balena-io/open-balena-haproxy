@@ -19,6 +19,7 @@ import {
 	CertificateClientErrorCodes,
 	CertificateResult,
 } from 'balena-certificate-client';
+import * as _ from 'lodash';
 import * as mzfs from 'mz/fs';
 import { sep } from 'path';
 import * as request from 'request-promise';
@@ -43,7 +44,7 @@ interface DeviceDetails {
  *
  * @returns A parsed JSON object.
  */
-export function LoadJSONFile(filePath: string): PromiseLike<{}> {
+export function LoadJSONFile<T>(filePath: string): PromiseLike<T> {
 	return mzfs.readFile(filePath, 'utf8').then(JSON.parse);
 }
 
@@ -71,6 +72,7 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	const dnsUpdateHost = process.env.CERT_SERVICE_HOST;
 	const dnsUpdatePort = parseInt(process.env.CERT_SERVICE_PORT || '0', 10);
 	const configRoot = process.env.CERT_SERVICE_DIR;
+	const email = process.env.CERT_SERVICE_EMAIL;
 	const domainCertDir = `${configRoot}/${domain}`;
 	let renewing = true;
 
@@ -85,6 +87,11 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	}
 	if (!configRoot) {
 		throw new Error('A certificate configuration directory is required');
+	}
+	if (!email) {
+		throw new Error(
+			'No valid email address for certificate acquisition has been specified',
+		);
 	}
 
 	// Either use the given static IP address in the envvars, or try and determine
@@ -139,8 +146,7 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 			domain,
 			subdomains: ['*', '*.devices', '*.s3'],
 			ip,
-			email: 'spam@whaleway.net',
-			//email: 'spam@whaleway.net', <-- Need a valid balena email addy
+			email,
 			renewing,
 			outputLocation: domainCertDir,
 		});
@@ -154,27 +160,21 @@ export async function GenerateCertificate(domain: string): Promise<string> {
 	// We load the certificates from the config volume and use those instead,
 	// storing into a local object first. This can then be used by the rest
 	// of the system.
-	const fileMap = new Map<keyof CertificateResult, string>([
-		['certificate', 'certificate'],
-		['ca', 'ca'],
-		['privateKey', 'private-key'],
-	]);
+	const fileMap: CertificateResult = {
+		certificate: 'certificate',
+		ca: 'ca',
+		privateKey: 'private-key',
+	};
 	if (!certResults) {
-		let fileResults: Partial<CertificateResult> = {};
 		try {
-			await Bluebird.map(fileMap, async entry => {
-				const key = entry[0];
-				const file = entry[1];
-
-				fileResults[key] = await mzfs.readFile(
-					`${domainCertDir}${sep}${file}.pem`,
-					'utf8',
-				);
-			});
+			certResults = await Bluebird.props(
+				_.mapValues(fileMap, file =>
+					mzfs.readFile(`${domainCertDir}${sep}${file}.pem`, 'utf8'),
+				),
+			);
 		} catch (err) {
 			throw new Error('Could not read certificates from local filestore');
 		}
-		certResults = fileResults as CertificateResult;
 	}
 
 	// We append the EEC, CA and private key together

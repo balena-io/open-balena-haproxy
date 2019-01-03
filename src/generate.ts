@@ -14,7 +14,7 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { GenerateHaproxyConfig } from './generate-config';
+import { Configuration, GenerateHaproxyConfig } from './generate-config';
 import { LoadJSONFile } from './utils';
 const capitano = require('capitano');
 
@@ -85,7 +85,7 @@ capitano.command({
 		} else if (envvar) {
 			throw new Error('Could not find environment variable: ' + envvar);
 		} else {
-			return LoadJSONFile(file).then(config => {
+			return LoadJSONFile<Configuration>(file).then(config => {
 				return GenerateHaproxyConfig(config, outputConfig, outputCert);
 			});
 		}
