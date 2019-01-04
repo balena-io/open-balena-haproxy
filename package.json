@@ -24,9 +24,13 @@
     ]
   },
   "dependencies": {
+    "balena-certificate-client": "^1.1.0",
     "bluebird": "^3.5.3",
     "capitano": "^1.8.2",
     "lodash": "^4.17.11",
+    "mz": "^2.7.0",
+    "request": "^2.88.0",
+    "request-promise": "^4.2.2",
     "temp": "^0.8.3"
   },
   "devDependencies": {
@@ -35,7 +39,10 @@
     "@types/chai-as-promised": "^7.1.0",
     "@types/lodash": "^4.14.118",
     "@types/mocha": "^5.2.5",
+    "@types/mz": "0.0.32",
     "@types/node": "^10.12.10",
+    "@types/request": "^2.48.1",
+    "@types/request-promise": "^4.1.42",
     "@types/temp": "^0.8.32",
     "app-root-path": "^2.1.0",
     "chai": "^4.2.0",

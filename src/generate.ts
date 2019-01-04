@@ -14,9 +14,16 @@ WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 See the License for the specific language governing permissions and
 limitations under the License.
 */
-import { GenerateHaproxyConfig } from './generate-config';
-import { LoadFromFile } from './utils';
+import { Configuration, GenerateHaproxyConfig } from './generate-config';
+import { LoadJSONFile } from './utils';
 const capitano = require('capitano');
+
+interface CommandOptions {
+	file?: string;
+	envvar?: string;
+	'output-cert'?: string;
+	'output-config'?: string;
+}
 
 const help = () => {
 	console.log(`Usage: generate [COMMANDS] [OPTIONS]`);
@@ -63,13 +70,14 @@ capitano.command({
 			required: false,
 		},
 	],
-	action: (_params: any, options: any) => {
-		const {
-			envvar,
-			file = '/.balena/config.json',
-			outputCert = '/etc/ssl/private/haproxy.cert.chain.pem',
-			outputConfig = '/usr/local/etc/haproxy/haproxy.cfg',
-		} = options;
+	action: (_params: null, commandOptions: CommandOptions) => {
+		const envvar = commandOptions.envvar;
+		const file = commandOptions.file || `${process.cwd()}/.balena/config.json`;
+		const outputCert =
+			commandOptions['output-cert'] ||
+			'/etc/ssl/private/haproxy.cert.chain.pem';
+		const outputConfig =
+			commandOptions['output-config'] || '/usr/local/etc/haproxy/haproxy.cfg';
 		let processConfig;
 		if (envvar && (processConfig = process.env[envvar])) {
 			let config = JSON.parse(processConfig);
@@ -77,7 +85,7 @@ capitano.command({
 		} else if (envvar) {
 			throw new Error('Could not find environment variable: ' + envvar);
 		} else {
-			return LoadFromFile(file).then(config => {
+			return LoadJSONFile<Configuration>(file).then(config => {
 				return GenerateHaproxyConfig(config, outputConfig, outputCert);
 			});
 		}

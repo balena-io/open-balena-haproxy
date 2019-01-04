@@ -15,15 +15,9 @@ limitations under the License.
 */
 import * as _ from 'lodash';
 import * as Bluebird from 'bluebird';
-import { writeFile } from 'fs';
-import { URL } from 'url';
+import * as mzfs from 'mz/fs';
 
-// Ensure third arg is optional to remove CB
-const writeFileAsync: (
-	path: string | number | Buffer | URL,
-	options?: {},
-	arg3?: (err: NodeJS.ErrnoException) => void,
-) => Bluebird<{}> = Bluebird.promisify(writeFile);
+import { GenerateCertificate } from './utils';
 
 export interface ServiceBackend {
 	url: string;
@@ -58,7 +52,7 @@ interface InternalConfig {
  * Certificate chain string
  * @type {string}
  */
-let chain = '';
+let fullChain = '';
 
 /**
  * Array of reserved ports for internal routing tricks
@@ -293,113 +287,138 @@ const generateHttpsConfig = (
 	return confStr;
 };
 
-const updateCertChain = (chain: string, cert: string): string => {
-	if (!chain.includes(cert)) {
-		chain += cert;
-	}
-	return chain;
-};
+const updateCertChain = (chain: string, cert: string): string =>
+	chain.includes(cert) ? chain : chain.concat(cert);
 
 // Populate configuration internal representation from input
-export function GenerateHaproxyConfig(
+export async function GenerateHaproxyConfig(
 	config: Configuration,
 	configOutputPath: string,
 	certOutputPath: string,
-): Bluebird<{}> {
-	return (
-		Bluebird.map(_.toPairs(config), ([key, value]) => {
-			let backendName = key + '_backend';
-			_.forEach(value['frontend'], frontend => {
-				// Decompose synthetic proto:domain:port objects.
-				let proto = _.get(frontend, 'protocol');
-				let subdomain = _.get(frontend, 'subdomain');
-				let domain = subdomain
-					? subdomain + '.' + _.get(frontend, 'domain')
-					: _.get(frontend, 'domain');
-				let port = _.get(frontend, 'port');
+): Promise<void> {
+	const generatedDomains: string[] = [];
+	const domainPrefix =
+		process.env.DOMAIN_INC_UUID === 'true'
+			? `${process.env.BALENA_DEVICE_UUID}.`
+			: '';
+	const generateCerts = process.env.AUTOGENERATE_CERTS === 'true';
+	let certificateGenerator: Promise<string> | undefined;
 
-				if (_.get(configuration['frontend'], proto)) {
-					if (_.get(configuration['frontend'][proto], port)) {
-						configuration['frontend'][proto][port] = configuration['frontend'][
-							proto
-						][port].concat([{ domain: domain, backendName: backendName }]);
-					} else {
-						configuration['frontend'][proto][port] = [
-							{ domain: domain, backendName: backendName },
-						];
-					}
-				} else {
-					configuration['frontend'][proto] = {
-						[port]: [{ domain: domain, backendName: backendName }],
-					};
-				}
-				const frontendCrt = _.get(frontend, 'crt');
-				if (frontendCrt) {
-					chain = updateCertChain(chain, frontendCrt);
-				}
-			});
+	await Bluebird.map(_.toPairs(config), ([key, value]) => {
+		const backendName = key + '_backend';
+		_.forEach(value['frontend'], frontend => {
+			// Decompose synthetic proto:domain:port objects.
+			const proto = _.get(frontend, 'protocol');
+			const subdomain = _.get(frontend, 'subdomain');
+			const tld = _.get(frontend, 'domain');
+			const prefixedTld = `${domainPrefix}${tld}`;
+			const domain = subdomain ? `${subdomain}.${prefixedTld}` : prefixedTld;
+			const port = _.get(frontend, 'port');
 
-			_.forEach(value['backend'], backend => {
-				let [backendProto, domain, backendPort] = _.split(backend['url'], ':');
-				domain = domain.replace(/^\/\//g, '');
-				if (!_.get(configuration['backend'], backendName)) {
-					configuration['backend'][backendName] = [
-						{
-							proto: backendProto,
-							port: backendPort,
-							backend: domain,
-						},
-					];
+			if (_.get(configuration['frontend'], proto)) {
+				if (_.get(configuration['frontend'][proto], port)) {
+					configuration['frontend'][proto][port] = configuration['frontend'][
+						proto
+					][port].concat([{ domain, backendName }]);
 				} else {
-					if (
-						!_.filter(
-							configuration['backend'][backendName],
-							i =>
-								i.proto === backendProto &&
-								i.port === backendPort &&
-								i.backend === domain,
-						).length
-					) {
-						configuration['backend'][backendName] = configuration['backend'][
-							backendName
-						].concat({
-							proto: backendProto,
-							port: backendPort,
-							backend: domain,
-						});
-					}
+					configuration['frontend'][proto][port] = [{ domain, backendName }];
 				}
-			});
-		})
-			// Generate HAProxy configuration segments.
-			.then(() => {
-				_.forEach(configuration['frontend'], (protoValue, proto) => {
-					_.forEach(protoValue, (_portValue, port: number) => {
-						if (proto === 'tcp') {
-							configurationString += generateTcpConfig(configuration, port);
-						} else if (proto === 'http') {
-							configurationString += generateHttpConfig(configuration, port);
-						} else if (proto === 'https') {
-							configurationString += generateHttpsConfig(
-								configuration,
-								port,
-								certOutputPath,
-							);
-						}
+			} else {
+				configuration['frontend'][proto] = {
+					[port]: [{ domain, backendName }],
+				};
+			}
+			const frontendCrt = _.get(frontend, 'crt');
+			// If a certificate entry exists, add that to the chain.
+			if (frontendCrt) {
+				fullChain = updateCertChain(fullChain, frontendCrt);
+			} else {
+				// If a certificate entry does not exist, we're going to make the
+				// assumption that a LE certificate for all subdomains (and the
+				// devices domain) is required. We'll keep a map of domains to ensure
+				// that they're all the same. If not, we'll throw an error as for
+				// the moment we shouldn't be creating multi-domain LBs.
+				// We also don't support '*' domains, as these are implied to
+				// be specific port/non-HTTPS bindings.
+				if (
+					generateCerts &&
+					!_.includes(generatedDomains, prefixedTld) &&
+					tld !== '*'
+				) {
+					// Multi LB for HAProxy is not yet valid
+					if (generatedDomains.length !== 0) {
+						console.log(generatedDomains);
+						throw new Error(
+							'Cannot use more than one domain for generated certificates',
+						);
+					}
+					generatedDomains.push(prefixedTld);
+
+					certificateGenerator = GenerateCertificate(prefixedTld);
+				}
+			}
+		});
+
+		_.forEach(value['backend'], backend => {
+			let [backendProto, domain, backendPort] = _.split(backend['url'], ':');
+			domain = domain.replace(/^\/\//g, '');
+			if (!_.has(configuration['backend'], backendName)) {
+				configuration['backend'][backendName] = [
+					{
+						proto: backendProto,
+						port: backendPort,
+						backend: domain,
+					},
+				];
+			} else {
+				if (
+					!_.some(
+						configuration['backend'][backendName],
+						i =>
+							i.proto === backendProto &&
+							i.port === backendPort &&
+							i.backend === domain,
+					)
+				) {
+					configuration['backend'][backendName] = configuration['backend'][
+						backendName
+					].concat({
+						proto: backendProto,
+						port: backendPort,
+						backend: domain,
 					});
-				});
-				configurationBackendStr = generateBackendConfig(configuration);
-			})
-			// Store HAProxy configuration to file.
-			.then(() => {
-				return writeFileAsync(
-					configOutputPath,
-					configurationString + configurationBackendStr,
+				}
+			}
+		});
+	});
+
+	const generatedChain = await certificateGenerator;
+	if (generatedChain) {
+		fullChain = updateCertChain(fullChain, generatedChain);
+	}
+
+	_.forEach(configuration['frontend'], (protoValue, proto) => {
+		_.forEach(protoValue, (_portValue, port: number) => {
+			if (proto === 'tcp') {
+				configurationString += generateTcpConfig(configuration, port);
+			} else if (proto === 'http') {
+				configurationString += generateHttpConfig(configuration, port);
+			} else if (proto === 'https') {
+				configurationString += generateHttpsConfig(
+					configuration,
+					port,
+					certOutputPath,
 				);
-			})
-			// Store Certificate chain to crtPath.
-			.then(() => {
-				return writeFileAsync(certOutputPath, chain);
-			})
+			}
+		});
+	});
+	configurationBackendStr = generateBackendConfig(configuration);
+
+	// Store HAProxy configuration to file.
+	await mzfs.writeFile(
+		configOutputPath,
+		configurationString + configurationBackendStr,
 	);
+
+	await mzfs.writeFile(certOutputPath, fullChain);
 }

@@ -4,6 +4,7 @@ Requires=confd.service
 After=confd.service
 
 [Service]
+TimeoutSec=infinity
 StandardOutput=journal+console
 StandardError=journal+console
 WorkingDirectory=/usr/src/app
