@@ -19,33 +19,103 @@ import * as mzfs from 'mz/fs';
 
 import { GenerateCertificate } from './utils';
 
+/**
+ * Backend server options. These are held as 'raw' HAProxy `key: value` options,
+ * so should an option have more than one parameter, the `value` should specify these
+ * including spaces. Options without parameters should specify a `value` of `null`.
+ * Some values allow the use of dynamic properties, such as the relevant backend
+ * name or port number.
+ *
+ */
+export interface BackendServer {
+	[option: string]: string | undefined;
+}
+
+/**
+ * Backend definition for a service.
+ */
 export interface ServiceBackend {
+	/** The internal URL for the service. */
 	url: string;
+	/** HAProxy `server` options. */
+	server?: BackendServer;
 }
 
+/**
+ * Frontend definition for a service.
+ */
 export interface ServiceFrontend {
+	/** Protocol input into HAProxy (eg. `http`, `https`, `tcp`, etc.) */
 	protocol: string;
+	/** The port to listen on. */
 	port: number;
+	/** The domain HAProxy is proxying for, eg `mydomain.com` */
 	domain: string;
+	/** The subdomain for the frontend service being defined, eg. `webpages` */
 	subdomain?: string;
+	/** A certificate to use to identify the frontend service, in PEM format. */
 	crt?: string;
+	/** Timeout value to hold connections for. */
+	clientTimeout?: string;
 }
 
+/**
+ * Configuration entry, holds multiple frontend and backend definitions for the
+ * specified service.
+ */
 export interface ConfigurationEntry {
 	frontend: ServiceFrontend[];
 	backend: ServiceBackend[];
 }
 
 /**
- * Configuration object inteface. Holds an internal representation of input
+ * Configuration object inteface, converted from the JSON configuration file.
+ * Each entry is a service name denoting a ConfigurationEntry object.
  */
 export interface Configuration {
 	[service: string]: ConfigurationEntry;
 }
 
+/**
+ * An internal frontend definition for creating the HAProxy config.
+ */
+interface InternalFrontendEntry {
+	/** The domain for the ACL. */
+	domain: string;
+	/** The backend name to use by the ACL. */
+	backendName: string;
+	/** Client connection timeout. */
+	clientTimeout?: string;
+}
+
+/**
+ * Internal backend definition for specifying the component services.
+ */
+interface InternalBackend {
+	/** Protocol used. */
+	proto: string;
+	/** Port to connect to service. */
+	port: string;
+	/** Backend name. */
+	backend: string;
+	/** Server options, if any. */
+	server?: BackendServer;
+}
+
+/** Parent internal configuration object. */
 interface InternalConfig {
-	frontend: any;
-	backend: any;
+	/** Frontend definitions. */
+	frontend: {
+		/** The protocol expected into HAProxy. */
+		[protocol: string]: {
+			/** A port linked to a frontend definition. */
+			[port: string]: InternalFrontendEntry[];
+		};
+	};
+	/** Backend definitions. */
+	backend: {
+		[component: string]: InternalBackend[];
+	};
 }
 
 /**
@@ -135,16 +205,22 @@ const generateBackendConfig = (configuration: InternalConfig): string => {
 			confStr += 'option forwardfor\n' + 'balance roundrobin\n';
 		}
 
+		// For each unique backend fill in the server details
 		_.forEach(backend, be => {
-			if (be.port === '443') {
-				confStr += `server ${be.backend} ${be.backend}:${
-					be.port
-				} send-proxy-v2 check-send-proxy port ${be.port}\n`;
-			} else {
-				confStr += `server ${be.backend} ${be.backend}:${be.port} check port ${
-					be.port
-				}\n`;
+			// Dynamic values are those which are based on specific backends
+			// Configs can specify known tags to fill in with these values
+			const dynamicValues = {
+				'<backend>': be.backend,
+				'<port>': be.port,
+			};
+			confStr += `server ${be.backend} ${be.backend}:${be.port}`;
+			if (be.server) {
+				_.map(be.server, (value, key) => {
+					const dynValue = _.get(dynamicValues, `${value}`, '');
+					confStr += ` ${key}${dynValue ? ` ${dynValue}` : ''}`;
+				});
 			}
+			confStr += '\n';
 		});
 	});
 	return confStr;
@@ -164,7 +240,7 @@ const generateBackendConfig = (configuration: InternalConfig): string => {
  */
 const generateTcpConfig = (
 	configuration: InternalConfig,
-	port: number,
+	port: string,
 ): string => {
 	let confStr = '';
 	if (!_.get(configuration, ['frontend', 'https', port])) {
@@ -172,6 +248,9 @@ const generateTcpConfig = (
 			`\nfrontend tcp_${port}_in\n` + 'mode tcp\n' + `bind *:${port}\n`;
 		_.forEach(configuration['frontend']['tcp'][port], acl => {
 			confStr += `default_backend ${acl.backendName}\n`;
+			confStr += acl.clientTimeout
+				? `timeout client ${acl.clientTimeout}\n`
+				: '';
 		});
 	}
 	return confStr;
@@ -191,7 +270,7 @@ const generateTcpConfig = (
  */
 const generateHttpConfig = (
 	configuration: InternalConfig,
-	port: number,
+	port: string,
 ): string => {
 	let confStr =
 		`\nfrontend http_${port}_in\n` +
@@ -204,6 +283,7 @@ const generateHttpConfig = (
 			'\n' +
 			`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
 			`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
+		confStr += acl.clientTimeout ? `timeout client ${acl.clientTimeout}\n` : '';
 	});
 	return confStr;
 };
@@ -222,9 +302,21 @@ const generateHttpConfig = (
  */
 const generateHttpsConfig = (
 	configuration: InternalConfig,
-	port: number,
+	port: string,
 	crtPath: string,
 ): string => {
+	const aclGenerator = (frontends: InternalFrontendEntry[]): string => {
+		return _.map(frontends, acl => {
+			let entryStr =
+				'\n' +
+				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
+				`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
+			entryStr += acl.clientTimeout
+				? `timeout client ${acl.clientTimeout}\n`
+				: '';
+			return entryStr;
+		}).join('');
+	};
 	let confStr = '';
 
 	// In case the port is used for both https and tcp traffic:
@@ -260,28 +352,14 @@ const generateHttpsConfig = (
 			'option forwardfor\n' +
 			`bind 127.0.0.1:${freePort} ssl crt ${crtPath} accept-proxy\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
-
-		confStr += _.map(configuration['frontend']['https'][port], acl => {
-			return (
-				'\n' +
-				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
-				`use_backend ${acl.backendName} if host_${acl.backendName}\n`
-			);
-		}).join('');
+		confStr += aclGenerator(configuration['frontend']['https'][port]);
 	} else {
 		confStr +=
 			`\nfrontend https_${port}_in\n` +
 			'mode http\n' +
 			`bind *:${port} ssl crt ${crtPath}\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
-
-		confStr += _.map(configuration['frontend']['https'][port], acl => {
-			return (
-				'\n' +
-				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
-				`use_backend ${acl.backendName} if host_${acl.backendName}\n`
-			);
-		}).join('');
+		confStr += aclGenerator(configuration['frontend']['https'][port]);
 	}
 
 	return confStr;
@@ -314,18 +392,24 @@ export async function GenerateHaproxyConfig(
 			const prefixedTld = `${domainPrefix}${tld}`;
 			const domain = subdomain ? `${subdomain}.${prefixedTld}` : prefixedTld;
 			const port = _.get(frontend, 'port');
+			const clientTimeout = frontend.clientTimeout;
+			const details: InternalFrontendEntry = {
+				domain,
+				backendName,
+				clientTimeout,
+			};
 
 			if (_.get(configuration['frontend'], proto)) {
 				if (_.get(configuration['frontend'][proto], port)) {
 					configuration['frontend'][proto][port] = configuration['frontend'][
 						proto
-					][port].concat([{ domain, backendName }]);
+					][port].concat([details]);
 				} else {
-					configuration['frontend'][proto][port] = [{ domain, backendName }];
+					configuration['frontend'][proto][port] = [details];
 				}
 			} else {
 				configuration['frontend'][proto] = {
-					[port]: [{ domain, backendName }],
+					[port]: [details],
 				};
 			}
 			const frontendCrt = _.get(frontend, 'crt');
@@ -347,7 +431,6 @@ export async function GenerateHaproxyConfig(
 				) {
 					// Multi LB for HAProxy is not yet valid
 					if (generatedDomains.length !== 0) {
-						console.log(generatedDomains);
 						throw new Error(
 							'Cannot use more than one domain for generated certificates',
 						);
@@ -360,33 +443,26 @@ export async function GenerateHaproxyConfig(
 		});
 
 		_.forEach(value['backend'], backend => {
-			let [backendProto, domain, backendPort] = _.split(backend['url'], ':');
+			let [proto, domain, port] = _.split(backend['url'], ':');
 			domain = domain.replace(/^\/\//g, '');
+			const backendDetails = {
+				proto,
+				port,
+				backend: domain,
+				server: _.get(backend, 'server'),
+			};
 			if (!_.has(configuration['backend'], backendName)) {
-				configuration['backend'][backendName] = [
-					{
-						proto: backendProto,
-						port: backendPort,
-						backend: domain,
-					},
-				];
+				configuration['backend'][backendName] = [backendDetails];
 			} else {
 				if (
 					!_.some(
 						configuration['backend'][backendName],
-						i =>
-							i.proto === backendProto &&
-							i.port === backendPort &&
-							i.backend === domain,
+						i => i.proto === proto && i.port === port && i.backend === domain,
 					)
 				) {
 					configuration['backend'][backendName] = configuration['backend'][
 						backendName
-					].concat({
-						proto: backendProto,
-						port: backendPort,
-						backend: domain,
-					});
+					].concat(backendDetails);
 				}
 			}
 		});
@@ -398,7 +474,7 @@ export async function GenerateHaproxyConfig(
 	}
 
 	_.forEach(configuration['frontend'], (protoValue, proto) => {
-		_.forEach(protoValue, (_portValue, port: number) => {
+		_.forEach(protoValue, (_portValue, port) => {
 			if (proto === 'tcp') {
 				configurationString += generateTcpConfig(configuration, port);
 			} else if (proto === 'http') {
