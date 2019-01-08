@@ -1,294 +1,372 @@
 {
-  "admin-http": {
-	"backend": [
-	  {
-		"url": "http://admin:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "http",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "admin",
-		"port": "80"
-	  }
-	]
-  },
-  "admin": {
-	"backend": [
-	  {
-		"url": "http://admin:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "admin",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "api": {
-	"backend": [
-	  {
-		"url": "http://api:80"
-	  },
-	  {
-		"url": "http://api2:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "api",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  },
-	  {
-		"protocol": "https",
-		"domain": "balenadev.io",
-		"subdomain": "api",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "builder": {
-	"backend": [
-	  {
-		"url": "http://builder:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "builder",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "delta": {
-	"backend": [
-	  {
-		"url": "http://delta:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "delta",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "devices": {
-	"backend": [
-	  {
-		"url": "http://devices:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "devices",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "img": {
-	"backend": [
-	  {
-		"url": "http://img:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "img",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "registry": {
-	"backend": [
-	  {
-		"url": "http://registry:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "registry",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "registry2": {
-	"backend": [
-	  {
-		"url": "http://registry2:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "registry2",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "s3": {
-	"backend": [
-	  {
-		"url": "http://s3:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "s3",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "ui": {
-	"backend": [
-	  {
-		"url": "http://ui:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "dashboard",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "sentry": {
-	"backend": [
-	  {
-		"url": "http://sentry:80"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "sentry",
-		"port": "443",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "registry2-81": {
-	"backend": [
-	  {
-		"url": "http://registry2:81"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "https",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "registry2",
-		"port": "445",
-		"crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
-	  }
-	]
-  },
-  "vpn": {
-	"backend": [
-	  {
-		"url": "tcp://vpn:443"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "tcp",
-		"domain": "open-balena-haproxy.local",
-		"subdomain": "vpn",
-		"port": "443"
-	  }
-	]
-  },
-  "devices-ssh": {
-	"backend": [
-	  {
-		"url": "tcp://devices:2222"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "tcp",
-		"domain": "*",
-		"port": "222"
-	  }
-	],
-	"cli_timeout": "1h"
-  },
-  "git": {
-	"backend": [
-	  {
-		"url": "tcp://git:22"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "tcp",
-		"domain": "*",
-		"port": "2222"
-	  }
-	],
-	"cli_timeout": "1h"
-  },
-  "db": {
-	"backend": [
-	  {
-		"url": "tcp://db:5432"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "tcp",
-		"domain": "*",
-		"port": "5432"
-	  }
-	],
-	"cli_timeout": "1h"
-  },
-  "redis": {
-	"backend": [
-	  {
-		"url": "tcp://redis:6379"
-	  }
-	],
-	"frontend": [
-	  {
-		"protocol": "tcp",
-		"domain": "*",
-		"port": "6379"
-	  }
-	],
-	"cli_timeout": "1h"
-  }
+    "admin-http": {
+        "backend": [
+            {
+                "url": "http://admin:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "http",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "admin",
+                "port": "80"
+            }
+        ]
+    },
+    "admin": {
+        "backend": [
+            {
+                "url": "http://admin:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "admin",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "api": {
+        "backend": [
+            {
+                "url": "http://api:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            },
+            {
+                "url": "http://api2:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "api",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            },
+            {
+                "protocol": "https",
+                "domain": "balenadev.io",
+                "subdomain": "api",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "builder": {
+        "backend": [
+            {
+                "url": "http://builder:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "builder",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "delta": {
+        "backend": [
+            {
+                "url": "http://delta:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "delta",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "devices": {
+        "backend": [
+            {
+                "url": "http://devices:80",
+                "server": {
+                    "send-proxy": null,
+                    "check-send-proxy": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "devices",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "img": {
+        "backend": [
+            {
+                "url": "http://img:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "img",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "registry": {
+        "backend": [
+            {
+                "url": "http://registry:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "registry",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "registry2": {
+        "backend": [
+            {
+                "url": "http://registry2:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "registry2",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "s3": {
+        "backend": [
+            {
+                "url": "http://s3:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "s3",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "ui": {
+        "backend": [
+            {
+                "url": "http://ui:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "dashboard",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "sentry": {
+        "backend": [
+            {
+                "url": "http://sentry:80",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "sentry",
+                "port": "443",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "registry2-81": {
+        "backend": [
+            {
+                "url": "http://registry2:81",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "registry2",
+                "port": "445",
+                "crt": "-----BEGIN CERTIFICATE-----\n-----END CERTIFICATE-----\n"
+            }
+        ]
+    },
+    "vpn": {
+        "backend": [
+            {
+                "url": "tcp://vpn:443",
+                "server": {
+                    "send-proxy-v2": null,
+                    "check-send-proxy": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "tcp",
+                "domain": "open-balena-haproxy.local",
+                "subdomain": "vpn",
+                "port": "443"
+            }
+        ]
+    },
+    "devices-ssh": {
+        "backend": [
+            {
+                "url": "tcp://devices:2222",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "tcp",
+                "domain": "*",
+                "port": "222"
+            }
+        ],
+        "cli_timeout": "1h"
+    },
+    "git": {
+        "backend": [
+            {
+                "url": "tcp://git:22",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "tcp",
+                "domain": "*",
+                "port": "2222"
+            }
+        ],
+        "cli_timeout": "1h"
+    },
+    "db": {
+        "backend": [
+            {
+                "url": "tcp://db:5432",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "tcp",
+                "domain": "*",
+                "port": "5432"
+            }
+        ],
+        "cli_timeout": "1h"
+    },
+    "redis": {
+        "backend": [
+            {
+                "url": "tcp://redis:6379",
+                "server": {
+                    "check": null,
+                    "port": "<port>"
+                }
+            }
+        ],
+        "frontend": [
+            {
+                "protocol": "tcp",
+                "domain": "*",
+                "port": "6379"
+            }
+        ],
+        "cli_timeout": "1h"
+    }
 }

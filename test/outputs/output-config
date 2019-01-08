@@ -134,7 +134,7 @@ backend devices_backend
 mode http
 option forwardfor
 balance roundrobin
-server devices devices:80 check port 80
+server devices devices:80 send-proxy check-send-proxy port 80
 
 backend img_backend
 mode http
