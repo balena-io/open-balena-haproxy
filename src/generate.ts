@@ -80,7 +80,9 @@ capitano.command({
 			commandOptions['output-config'] || '/usr/local/etc/haproxy/haproxy.cfg';
 		let processConfig;
 		if (envvar && (processConfig = process.env[envvar])) {
-			let config = JSON.parse(processConfig);
+			const config = JSON.parse(
+				Buffer.from(processConfig, 'base64').toString(),
+			);
 			return GenerateHaproxyConfig(config, outputConfig, outputCert);
 		} else if (envvar) {
 			throw new Error('Could not find environment variable: ' + envvar);
