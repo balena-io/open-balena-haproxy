@@ -1,4 +1,4 @@
-FROM balena/open-balena-base:v5.0.0
+FROM balena/open-balena-base:armv7-fin
 
 ENV HAPROXY_MAJOR 1.8
 ENV HAPROXY_VERSION 1.8.13
