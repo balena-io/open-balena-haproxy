@@ -17,6 +17,7 @@ import * as Bluebird from 'bluebird';
 import * as rootPath from 'app-root-path';
 import * as chai from 'chai';
 import * as chaiAsPromised from 'chai-as-promised';
+import { execSync } from 'child_process';
 import 'mocha';
 import * as temp from 'temp';
 
@@ -79,4 +80,35 @@ describe('HAProxy Configuration Generation', () => {
 			);
 		});
 	});
+
+	it('should generate a valid HAProxy config from a set of envvars', () => {
+		return Bluebird.fromCallback<string>(cb => {
+			return temp.mkdir('haproxy-tests', cb);
+		}).then(tempDir => {
+			const configOne =
+				'ewogICAgImZpcnN0IjogewogICAgICAgICJiYWNrZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAidXJsIjogImh0dHA6Ly9maXJzdDo4MCIsCiAgICAgICAgICAgICAgICAic2VydmVyIjogewogICAgICAgICAgICAgICAgICAgICJjaGVjayI6IG51bGwsCiAgICAgICAgICAgICAgICAgICAgInBvcnQiOiAiPHBvcnQ+IgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZnJvbnRlbmQiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgICJwcm90b2NvbCI6ICJodHRwIiwKICAgICAgICAgICAgICAgICJkb21haW4iOiAidGVzdC5kb21haW4iLAogICAgICAgICAgICAgICAgInN1YmRvbWFpbiI6ICJmaXJzdCIsCiAgICAgICAgICAgICAgICAicG9ydCI6ICI4MCIKICAgICAgICAgICAgfQogICAgICAgIF0KICAgIH0sCiAgICAic2Vjb25kIjogewogICAgICAgICJiYWNrZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAidXJsIjogImh0dHA6Ly9zZWNvbmQ6ODAiLAogICAgICAgICAgICAgICAgInNlcnZlciI6IHsKICAgICAgICAgICAgICAgICAgICAiY2hlY2siOiBudWxsLAogICAgICAgICAgICAgICAgICAgICJwb3J0IjogIjxwb3J0PiIKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImZyb250ZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAicHJvdG9jb2wiOiAiaHR0cCIsCiAgICAgICAgICAgICAgICAiZG9tYWluIjogInRlc3QuZG9tYWluIiwKICAgICAgICAgICAgICAgICJzdWJkb21haW4iOiAic2Vjb25kIiwKICAgICAgICAgICAgICAgICJwb3J0IjogIjgwIgogICAgICAgICAgICB9CiAgICAgICAgXQogICAgfQp9Cg==';
+			const configTwo =
+				'ewogICAgInRoaXJkIjogewogICAgICAgICJiYWNrZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAidXJsIjogImh0dHA6Ly90aGlyZDo4MCIsCiAgICAgICAgICAgICAgICAic2VydmVyIjogewogICAgICAgICAgICAgICAgICAgICJjaGVjayI6IG51bGwsCiAgICAgICAgICAgICAgICAgICAgInBvcnQiOiAiPHBvcnQ+IgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZnJvbnRlbmQiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgICJwcm90b2NvbCI6ICJodHRwIiwKICAgICAgICAgICAgICAgICJkb21haW4iOiAidGVzdC5kb21haW4iLAogICAgICAgICAgICAgICAgInN1YmRvbWFpbiI6ICJ0aGlyZCIsCiAgICAgICAgICAgICAgICAicG9ydCI6ICI4MCIKICAgICAgICAgICAgfQogICAgICAgIF0KICAgIH0sCiAgICAiZm91cnRoIjogewogICAgICAgICJiYWNrZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAidXJsIjogImh0dHA6Ly9mb3VydGg6ODAiLAogICAgICAgICAgICAgICAgInNlcnZlciI6IHsKICAgICAgICAgICAgICAgICAgICAiY2hlY2siOiBudWxsLAogICAgICAgICAgICAgICAgICAgICJwb3J0IjogIjxwb3J0PiIKICAgICAgICAgICAgICAgIH0KICAgICAgICAgICAgfQogICAgICAgIF0sCiAgICAgICAgImZyb250ZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAicHJvdG9jb2wiOiAiaHR0cCIsCiAgICAgICAgICAgICAgICAiZG9tYWluIjogInRlc3QuZG9tYWluIiwKICAgICAgICAgICAgICAgICJzdWJkb21haW4iOiAiZm91cnRoIiwKICAgICAgICAgICAgICAgICJwb3J0IjogIjgwIgogICAgICAgICAgICB9CiAgICAgICAgXQogICAgfQp9Cg==';
+			const configThree =
+				'ewogICAgImZpZnRoIjogewogICAgICAgICJiYWNrZW5kIjogWwogICAgICAgICAgICB7CiAgICAgICAgICAgICAgICAidXJsIjogImh0dHA6Ly9maWZ0aDo4MCIsCiAgICAgICAgICAgICAgICAic2VydmVyIjogewogICAgICAgICAgICAgICAgICAgICJjaGVjayI6IG51bGwsCiAgICAgICAgICAgICAgICAgICAgInBvcnQiOiAiPHBvcnQ+IgogICAgICAgICAgICAgICAgfQogICAgICAgICAgICB9CiAgICAgICAgXSwKICAgICAgICAiZnJvbnRlbmQiOiBbCiAgICAgICAgICAgIHsKICAgICAgICAgICAgICAgICJwcm90b2NvbCI6ICJodHRwIiwKICAgICAgICAgICAgICAgICJkb21haW4iOiAidGVzdC5kb21haW4iLAogICAgICAgICAgICAgICAgInN1YmRvbWFpbiI6ICJmaWZ0aCIsCiAgICAgICAgICAgICAgICAicG9ydCI6ICI4MCIKICAgICAgICAgICAgfQogICAgICAgIF0KICAgIH0KfQo=';
+
+			const command =
+				`TEST_CONFIG=${configOne} TEST_CONFIG_1=${configTwo} TEST_CONFIG_2=${configThree} ` +
+				`${process.cwd()}/bin/generate-config config -e TEST_CONFIG ` +
+				`-p ${tempDir}/chain.pem -c ${tempDir}/output`;
+
+			// A horrible sync is the simplest thing to do.
+			execSync(command);
+
+			return loadFiles([
+				`${tempDir}/output`,
+				`${rootPath}/test/outputs/envvar-output-config`,
+			]).then(files => {
+				const testConfigFile = files[0];
+				const refConfigFile = files[1];
+
+				testConfigFile.should.deep.equals(refConfigFile);
+			});
+		});
+	}).timeout(10000);
 });
