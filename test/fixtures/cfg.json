@@ -368,5 +368,29 @@
             }
         ],
         "cli_timeout": "1h"
+    },
+    "stats": {
+        "frontend": [
+            {
+                "protocol": "https",
+                "domain": "*",
+                "port": "1936",
+                "stats": [
+                    "enable",
+                    "uri /https_route",
+                    "auth test:test"
+                ]
+            },
+            {
+                "protocol": "http",
+                "domain": "*",
+                "port": "1937",
+                "stats": [
+                    "enable",
+                    "uri /http_route"
+                ]
+            }
+        ],
+        "cli_timeout": "1h"
     }
 }
