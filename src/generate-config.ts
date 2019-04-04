@@ -27,7 +27,7 @@ import { GenerateCertificate } from './utils';
  * name or port number.
  *
  */
-export interface BackendServer {
+export interface TextOption {
 	[option: string]: string | undefined;
 }
 
@@ -38,7 +38,7 @@ export interface ServiceBackend {
 	/** The internal URL for the service. */
 	url: string;
 	/** HAProxy `server` options. */
-	server?: BackendServer;
+	server?: TextOption;
 }
 
 /**
@@ -57,6 +57,8 @@ export interface ServiceFrontend {
 	crt?: string;
 	/** Timeout value to hold connections for. */
 	clientTimeout?: string;
+	/** Stats options. */
+	stats?: TextOption[];
 }
 
 /**
@@ -86,6 +88,8 @@ interface InternalFrontendEntry {
 	backendName: string;
 	/** Client connection timeout. */
 	clientTimeout?: string;
+	/** Stats options. */
+	stats?: TextOption[];
 }
 
 /**
@@ -99,7 +103,7 @@ interface InternalBackend {
 	/** Backend name. */
 	backend: string;
 	/** Server options, if any. */
-	server?: BackendServer;
+	server?: TextOption;
 }
 
 /** Parent internal configuration object. */
@@ -187,6 +191,27 @@ const getFreePort = (
 };
 
 /**
+ * Generates a stats group should the frontend option be present.
+ * @param entries: Array of frontend data entries
+ * @returns {string} String containing the new stats block for HAProxy
+ */
+const statsGenerator = (entries: InternalFrontendEntry[]): string => {
+	const statsEntries = _.reduce(
+		entries,
+		(prev, entry) => _.union(prev, entry.stats),
+		[],
+	);
+	let statsString = '';
+
+	// Format entries.
+	for (const stat of statsEntries) {
+		statsString += `stats ${stat}\n`;
+	}
+
+	return statsString;
+};
+
+/**
  * Generates HAProxy back-ends configuration,
  * using input parameter configuration['backend'] structure
  * @param configuration: object containing backend key. Backend contains a list of backends, with structure:
@@ -246,8 +271,11 @@ const generateTcpConfig = (
 	if (!_.get(configuration, ['frontend', 'https', port])) {
 		confStr +=
 			`\nfrontend tcp_${port}_in\n` + 'mode tcp\n' + `bind *:${port}\n`;
+		confStr += statsGenerator(configuration['frontend']['http'][port]);
 		_.forEach(configuration['frontend']['tcp'][port], acl => {
-			confStr += `default_backend ${acl.backendName}\n`;
+			if (acl.backendName) {
+				confStr += `default_backend ${acl.backendName}\n`;
+			}
 			confStr += acl.clientTimeout
 				? `timeout client ${acl.clientTimeout}\n`
 				: '';
@@ -278,11 +306,14 @@ const generateHttpConfig = (
 		'option forwardfor\n' +
 		`bind *:${port}\n` +
 		'reqadd X-Forwarded-Proto:\\ http\n';
+	confStr += statsGenerator(configuration['frontend']['http'][port]);
 	_.forEach(configuration['frontend']['http'][port], acl => {
-		confStr +=
-			'\n' +
-			`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
-			`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
+		if (acl.backendName) {
+			confStr +=
+				'\n' +
+				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
+				`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
+		}
 		confStr += acl.clientTimeout ? `timeout client ${acl.clientTimeout}\n` : '';
 	});
 	return confStr;
@@ -307,10 +338,13 @@ const generateHttpsConfig = (
 ): string => {
 	const aclGenerator = (frontends: InternalFrontendEntry[]): string => {
 		return _.map(frontends, acl => {
-			let entryStr =
-				'\n' +
-				`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
-				`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
+			let entryStr = '';
+			if (acl.backendName) {
+				entryStr =
+					'\n' +
+					`acl host_${acl.backendName} hdr_dom(host) -i ${acl.domain}\n` +
+					`use_backend ${acl.backendName} if host_${acl.backendName}\n`;
+			}
 			entryStr += acl.clientTimeout
 				? `timeout client ${acl.clientTimeout}\n`
 				: '';
@@ -352,6 +386,7 @@ const generateHttpsConfig = (
 			'option forwardfor\n' +
 			`bind 127.0.0.1:${freePort} ssl crt ${crtPath} accept-proxy\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
+		confStr += statsGenerator(configuration['frontend']['https'][port]);
 		confStr += aclGenerator(configuration['frontend']['https'][port]);
 	} else {
 		confStr +=
@@ -359,6 +394,7 @@ const generateHttpsConfig = (
 			'mode http\n' +
 			`bind *:${port} ssl crt ${crtPath}\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
+		confStr += statsGenerator(configuration['frontend']['https'][port]);
 		confStr += aclGenerator(configuration['frontend']['https'][port]);
 	}
 
@@ -383,7 +419,7 @@ export async function GenerateHaproxyConfig(
 	let certificateGenerator: Promise<string> | undefined;
 
 	await Bluebird.map(_.toPairs(config), ([key, value]) => {
-		const backendName = key + '_backend';
+		const backendName = value.backend ? key + '_backend' : '';
 		_.forEach(value['frontend'], frontend => {
 			// Decompose synthetic proto:domain:port objects.
 			const proto = _.get(frontend, 'protocol');
@@ -397,6 +433,7 @@ export async function GenerateHaproxyConfig(
 				domain,
 				backendName,
 				clientTimeout,
+				stats: _.get(frontend, 'stats'),
 			};
 
 			if (_.get(configuration['frontend'], proto)) {

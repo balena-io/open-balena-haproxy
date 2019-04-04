@@ -15,6 +15,14 @@ reqadd X-Forwarded-Proto:\ http
 acl host_admin-http_backend hdr_dom(host) -i admin.open-balena-haproxy.local
 use_backend admin-http_backend if host_admin-http_backend
 
+frontend http_1937_in
+mode http
+option forwardfor
+bind *:1937
+reqadd X-Forwarded-Proto:\ http
+stats enable
+stats uri /http_route
+
 frontend https_443_in
 mode tcp
 bind *:443
@@ -78,6 +86,14 @@ reqadd X-Forwarded-Proto:\ https
 
 acl host_registry2-81_backend hdr_dom(host) -i registry2.open-balena-haproxy.local
 use_backend registry2-81_backend if host_registry2-81_backend
+
+frontend https_1936_in
+mode http
+bind *:1936 ssl crt {{tmp}}/chain.pem
+reqadd X-Forwarded-Proto:\ https
+stats enable
+stats uri /https_route
+stats auth test:test
 
 frontend tcp_222_in
 mode tcp
