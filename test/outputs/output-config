@@ -6,6 +6,15 @@ timeout connect 5000
 timeout client 60000
 timeout server 60000
 
+resolvers test-bridge-resolver
+  nameserver test-dns-resolver 127.0.0.11:53
+  nameserver second-dns-resolver 17.18.0.1:1234
+  hold valid 0ms
+  hold obsolete 1000ms
+  hold refused 30s
+  resolve_retries 3
+  timeout resolve 1s
+
 frontend http_80_in
 mode http
 option forwardfor
@@ -114,12 +123,13 @@ frontend tcp_6379_in
 mode tcp
 bind *:6379
 default_backend redis_backend
+timeout client 1h
 
 backend admin-http_backend
 mode http
 option forwardfor
 balance roundrobin
-server admin admin:80 check port 80
+server admin admin:80 resolvers test-bridge-resolver resolve-prefer ipv4 check port 80
 
 backend admin_backend
 mode http
@@ -131,8 +141,8 @@ backend api_backend
 mode http
 option forwardfor
 balance roundrobin
-server api api:80 check port 80
-server api2 api2:80 check port 80
+server api api:80 resolvers test-bridge-resolver resolve-prefer ipv4 check port 80
+server api2 api2:80 resolvers test-bridge-resolver resolve-prefer ipv4 check port 80
 
 backend builder_backend
 mode http

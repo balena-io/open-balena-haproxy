@@ -1,9 +1,29 @@
 {
+    "resolvers": [
+        {
+            "id": "test-bridge-resolver",
+            "nameservers": {
+                "test-dns-resolver": "127.0.0.11:53",
+                "second-dns-resolver": "17.18.0.1:1234"
+            },
+            "hold": {
+                "valid": "0ms",
+                "obsolete": "1000ms",
+                "refused": "30s"
+            },
+            "resolveRetries": "3",
+            "timeout": {
+                "resolve": "1s"
+            }
+        }
+    ],
     "admin-http": {
         "backend": [
             {
                 "url": "http://admin:80",
                 "server": {
+                    "resolvers": "test-bridge-resolver",
+                    "resolve-prefer": "ipv4",
                     "check": null,
                     "port": "<port>"
                 }
@@ -43,6 +63,8 @@
             {
                 "url": "http://api:80",
                 "server": {
+                    "resolvers": "test-bridge-resolver",
+                    "resolve-prefer": "ipv4",
                     "check": null,
                     "port": "<port>"
                 }
@@ -50,6 +72,8 @@
             {
                 "url": "http://api2:80",
                 "server": {
+                    "resolvers": "test-bridge-resolver",
+                    "resolve-prefer": "ipv4",
                     "check": null,
                     "port": "<port>"
                 }
@@ -309,8 +333,7 @@
                 "domain": "*",
                 "port": "222"
             }
-        ],
-        "cli_timeout": "1h"
+        ]
     },
     "git": {
         "backend": [
@@ -328,8 +351,7 @@
                 "domain": "*",
                 "port": "2222"
             }
-        ],
-        "cli_timeout": "1h"
+        ]
     },
     "db": {
         "backend": [
@@ -347,8 +369,7 @@
                 "domain": "*",
                 "port": "5432"
             }
-        ],
-        "cli_timeout": "1h"
+        ]
     },
     "redis": {
         "backend": [
@@ -364,10 +385,10 @@
             {
                 "protocol": "tcp",
                 "domain": "*",
-                "port": "6379"
+                "port": "6379",
+                "clientTimeout": "1h"
             }
-        ],
-        "cli_timeout": "1h"
+        ]
     },
     "stats": {
         "frontend": [
@@ -390,7 +411,6 @@
                     "uri /http_route"
                 ]
             }
-        ],
-        "cli_timeout": "1h"
+        ]
     }
 }
