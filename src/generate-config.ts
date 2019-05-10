@@ -62,6 +62,28 @@ export interface ServiceFrontend {
 }
 
 /**
+ * DNS name resolution definition for a service.
+ */
+export interface ServiceResolver {
+	/** ID for the resolver service to create. */
+	id: string;
+	/** List of nameservers to use for the resolver, where the value is the `ip:port`. */
+	nameservers: {
+		[nameserver: string]: string;
+	};
+	/** List of hold statuses and timeouts is seconds or milliseconds. */
+	hold: {
+		[status: string]: string;
+	};
+	/** Number of times to attempt a name resolution before failing. */
+	resolveRetries: number;
+	/** Event timeouts for resolution, in seconds or milliseconds. */
+	timeout: {
+		[event: string]: string;
+	};
+}
+
+/**
  * Configuration entry, holds multiple frontend and backend definitions for the
  * specified service.
  */
@@ -71,12 +93,13 @@ export interface ConfigurationEntry {
 }
 
 /**
- * Configuration object inteface, converted from the JSON configuration file.
- * Each entry is a service name denoting a ConfigurationEntry object.
+ * Configuration object type, converted from the JSON configuration file.
+ * Each entry is a service name denoting a ConfigurationEntry object or
+ * an set of resolver definitions.
  */
-export interface Configuration {
-	[service: string]: ConfigurationEntry;
-}
+export type Configuration = { [service: string]: ConfigurationEntry } & {
+	resolvers: ServiceResolver[];
+};
 
 /**
  * An internal frontend definition for creating the HAProxy config.
@@ -211,6 +234,32 @@ const statsGenerator = (entries: InternalFrontendEntry[]): string => {
 	return statsString;
 };
 
+const resolverGenerator = (resolver: ServiceResolver): string => {
+	let resolversString = `\nresolvers ${resolver.id}\n`;
+
+	// Each nameserver entry
+	for (const name in resolver.nameservers) {
+		resolversString += `  nameserver ${name} ${resolver.nameservers[name]}\n`;
+	}
+
+	// Any hold statuses
+	for (const status in resolver.hold) {
+		resolversString += `  hold ${status} ${resolver.hold[status]}\n`;
+	}
+
+	// Resolver retry attempts
+	if (resolver.resolveRetries) {
+		resolversString += `  resolve_retries ${resolver.resolveRetries}\n`;
+	}
+
+	// Timeout events
+	for (const event in resolver.timeout) {
+		resolversString += `  timeout ${event} ${resolver.timeout[event]}\n`;
+	}
+
+	return resolversString;
+};
+
 /**
  * Generates HAProxy back-ends configuration,
  * using input parameter configuration['backend'] structure
@@ -241,8 +290,9 @@ const generateBackendConfig = (configuration: InternalConfig): string => {
 			confStr += `server ${be.backend} ${be.backend}:${be.port}`;
 			if (be.server) {
 				_.map(be.server, (value, key) => {
-					const dynValue = _.get(dynamicValues, `${value}`, '');
-					confStr += ` ${key}${dynValue ? ` ${dynValue}` : ''}`;
+					const dynValue = _.get(dynamicValues, `${value}`, value);
+					const finalValue = dynValue ? ` ${dynValue}` : '';
+					confStr += ` ${key}${finalValue}`;
 				});
 			}
 			confStr += '\n';
@@ -418,6 +468,14 @@ export async function GenerateHaproxyConfig(
 	const generateCerts = process.env.AUTOGENERATE_CERTS === 'true';
 	let certificateGenerator: Promise<string> | undefined;
 
+	// Generate name resolvers
+	if (config.resolvers) {
+		for (const resolver of config.resolvers) {
+			configurationString += resolverGenerator(resolver);
+		}
+	}
+
+	// Backend/frontend generator
 	await Bluebird.map(_.toPairs(config), ([key, value]) => {
 		const backendName = value.backend ? key + '_backend' : '';
 		_.forEach(value['frontend'], frontend => {

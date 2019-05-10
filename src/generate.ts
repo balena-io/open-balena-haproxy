@@ -99,7 +99,13 @@ capitano.command({
 				processConfig = process.env[`${envvar}_${configCounter++}`];
 			}
 
-			return GenerateHaproxyConfig(finalConfig, outputConfig, outputCert);
+			if (finalConfig) {
+				return GenerateHaproxyConfig(
+					finalConfig as Configuration,
+					outputConfig,
+					outputCert,
+				);
+			}
 		} else if (envvar) {
 			throw new Error('Could not find environment variable: ' + envvar);
 		} else {
