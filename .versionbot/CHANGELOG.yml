@@ -1,0 +1,457 @@
+- commits:
+  - author: Pagan Gazzard
+    body: Update open-balena-base from 7.2.1 to 7.2.2
+    footers:
+      change-type: patch
+    hash: f31c4bd8597178aeecf5e7d66eb109ab42056d58
+    subject: Update open-balena-base to 7.2.2
+  date: "2019-06-21T13:25:49Z"
+  version: 2.8.1
+- commits:
+  - author: Pagan Gazzard
+    body: Update open-balena-base from 7.0.0 to 7.2.1
+    footers:
+      change-type: minor
+    hash: b9f965894c24d80b767e9f7d2eca9695fa15008b
+    subject: Update open-balena-base to 7.2.1
+  date: "2019-06-07T11:29:05Z"
+  version: 2.8.0
+- commits:
+  - author: Heds Simons
+    body: |-
+      This commit allows the definition of nameserver
+      resolvers to allow backends to be looked up based
+      upon specific parameters.
+      See the 'test/fixtures/cfg.json' file for an example
+      which is based upon HAProxy's standard settings.
+    footers:
+      change-type: minor
+      connects-to: '#37'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: c9807a79f751b6ddddec48001bc13af83f3fef97
+    subject: 'resolvers: Allow resolver definitions for lookup'
+  date: "2019-05-10T12:50:32Z"
+  version: 2.7.0
+- commits:
+  - author: Heds Simons
+    body: |-
+      Also ensures that backends are not generated should
+      there not be a backend structure assigned to a group.
+    footers:
+      change-type: minor
+      connects-to: '#35'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 2ff2dc637ae09002c124aa3830bfc4ab45ba9522
+    subject: 'frontend: Allow stats to be enabled on frontends'
+  date: "2019-04-04T08:58:31Z"
+  version: 2.6.0
+- commits:
+  - author: Heds Simons
+    body: |-
+      Whilst moving to multiple envvar configs works, confd
+      does not support dynamic variables.
+      This PR moves to using the `/etc/docker.env` file for
+      the `balena-haproxy` service.
+      As this service was not intended to be used with a
+      system utilising `etcd`, we do not suffer any
+      consequences from this.
+    footers:
+      change-type: patch
+      connects-to: '#33'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: ddcbb759eab09db5d3bd14a6bd14b808dc12262b
+    subject: 'confd: Remove `confd` and move to Docker envvars'
+  date: "2019-04-02T08:13:23Z"
+  version: 2.5.1
+- commits:
+  - author: Heds Simons
+    body: |-
+      Allows multiple config envvars to be specified to allow
+      the building of a valid config.
+      This allows very large configs to be split across envvars
+      to ensure that the kernel argument limit size (128K) is
+      not breached.
+    footers:
+      change-type: minor
+      connects-to: '#31'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 9960cd4b7cc56f1860c71f6ad72695c39843bf6b
+    subject: 'config: Allow configs build from multiple envvars'
+  date: "2019-04-01T12:44:30Z"
+  version: 2.5.0
+- commits:
+  - author: Heds Simons
+    body: ""
+    footers:
+      change-type: minor
+      connects-to: '#29'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: cc1aee1e3d0adf1d745a72521d0e10aefc004477
+    subject: 'open-balena-base: Update open-balena-base to v7.0.0'
+  date: "2019-03-14T17:14:13Z"
+  version: 2.4.0
+- commits:
+  - author: Heds Simons
+    body: ""
+    footers:
+      change-type: minor
+      connects-to: '#27'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 64bbda50d8c715d04c74219ff2d0ec4ebab7d3d9
+    subject: 'open-balena-base: Update open-balena-base to v6.0.0'
+  date: "2019-03-12T11:22:44Z"
+  version: 2.3.0
+- commits:
+  - author: Heds Simons
+    body: ""
+    footers:
+      change-type: patch
+      connects-to: '#25'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: dfc5e2136a80c89c9f6d53dec95175212994bccb
+    subject: 'codeowners: Add @mikesimos, @hedss & @richbayliss'
+  date: "2019-03-09T13:17:13Z"
+  version: 2.2.2
+- commits:
+  - author: Heds Simons
+    body: ""
+    footers:
+      change-type: patch
+      connects-to: '#22'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 72eda39ea5b43c2b7065786a2c75dd4624c3072a
+    subject: 'config: Ensure `PROXY_CONFIG` is decoded from base64'
+  date: "2019-01-14T12:32:39Z"
+  version: 2.2.1
+- commits:
+  - author: Heds Simons
+    body: |-
+      Client timeouts can now be specified on a `frontend`
+      using the `clientTimeout` option, with an appropriate
+      HAProxy value.
+      `backend`s now need to include any appropriate `server`
+      options (as well as a `url`) to ensure that these are
+      included in the configuration (hardcoded defaults have
+      been removed, as well as hardcoded checks for 'known'
+      components). This mostly involves including a `check`
+      and `port` option for most backends. See tests for
+      more details.
+    footers:
+      change-type: minor
+      connects-to: '#18'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 6fc7c3296ef901fe4726b4412f20d410a2d8b99a
+    subject: 'config: Ensure configuration options are honoured'
+  date: "2019-01-08T16:45:52Z"
+  version: 2.2.0
+- commits:
+  - author: Heds Simons
+    body: |-
+      This functionality adds the ability to autogenerate
+      Let's Encrypt certificates for the device that this
+      component executes upon.
+      Full information in the README file.
+    footers:
+      change-type: minor
+      connects-to: '#14'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: f7c971ca0b40b0f8802e49ceb5b6835554a83dcf
+    subject: 'certificates: Adds automated certificate generation'
+  - author: Heds Simons
+    body: ""
+    footers:
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 5a469d125a5b0181d7d1639c5fb93acc047c14a0
+    subject: Update post-peer review.
+  - author: Heds Simons
+    body: ""
+    footers:
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 16764f63d6c4a5958ceb35f1bbf8e08ab229bb6f
+    subject: Further updates post-peer review.
+  - author: Heds Simons
+    body: ""
+    footers:
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 0c5f835a186d3e9982c94c254819626ba088bbc5
+    subject: Hopefully final update post-peer review.
+  date: "2019-01-04T10:40:59Z"
+  version: 2.1.0
+- commits:
+  - author: Heds Simons
+    body: |-
+      This commit moves the codebase to TypeScript. It
+      includes changes to ensure builds and tests work
+      correctly under the new language and shores up
+      test practice.
+      It has not been documented, nor have any optimisations
+      or changes been made above those required to move.
+      Prettify and lint have been added.
+    footers:
+      change-type: major
+      connects-to: '#12'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 34022262dab30d1d88404729b47b2060f2a7815c
+    subject: 'typescript: Move entire codebase to TypeScript'
+  - author: Heds Simons
+    body: ""
+    footers:
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 3b393f51bf2890bbd2c6cfbbfc02fba365e62387
+    subject: Update post-peer review.
+  date: "2018-11-28T16:10:50Z"
+  version: 2.0.0
+- commits:
+  - author: Heds Simons
+    body: |-
+      Moves component inline with all other services running
+      under `open-balena-base`, to use `systemd`.
+    footers:
+      change-type: patch
+      connects-to: '#10'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: 177b161a1cacde65ce493bd8033c72e682777bff
+    subject: 'systemd: Move from entrypoint/cmd to systemd'
+  date: "2018-11-23T12:21:02Z"
+  version: 1.1.1
+- commits:
+  - author: Heds Simons
+    body: |-
+      This commit ensures that tests can be run natively during
+      development with `npm test` and not just during Docker build.
+      This includes agnostic temporary directory code and some
+      patching to ensure reference files can be modified at
+      test time to use any temporary directory file structure.
+      It also updates the base container to `5.0.0` to make use of
+      inbuilt Node/NPM utils and ensure that `npm ci` can be used
+      (including adding the `package-lock.json` file).
+    footers:
+      change-type: minor
+      connects-to: '#8'
+      signed-off-by: Heds Simons <heds@balena.io>
+    hash: d4148c708cd8d31194b0eb0c976803aab2ead5cb
+    subject: 'tests: Ensure tests run natively and update base'
+  date: "2018-11-22T13:42:12Z"
+  version: 1.1.0
+- commits:
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 6c0c0d1ca028743a5f25afde4fb885997bfdd1b1
+    subject: 'cfg: Refactor format'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@balena.io>
+    hash: 554904208e212dfaa4be1a1d68986500e7d242d7
+    subject: 'ci: Push to balena/open-balena-haproxy'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@balena.io>
+    hash: 076cf7ec2860f0d3d254adbc292a34f2d5f20af7
+    subject: 'tests: Cleanup'
+  date: "2018-11-08T16:22:42Z"
+  version: 1.0.1
+- commits:
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: major
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 62953123b32327c0348ae3c5710527f02301ba9e
+    subject: Publish to resin/balena-haproxy
+  date: "2018-09-27T06:58:54Z"
+  version: 1.0.0
+- commits:
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 03cfb4c4010e558a53c843f38f2fbcad7287cb0e
+    subject: 'config-generator: Add accept-proxy directive when proxying internally'
+  date: "2018-09-26T17:53:14Z"
+  version: 0.1.1
+- commits:
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 176199e4d16f4c6e9833002b2e8c2f4d19202a6f
+    subject: 'generate: Change default config file input path to /.balena/config.json'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 77aab943f1fb483670d01a7a4d53b0a3f0464239
+    subject: 'config: Adapt haproxy config generation to new format'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 5c4dfc745862c1de4b80bb030a28b6fc24de774a
+    subject: Update README.md
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 4bdc92f74b1384658e595f487928f157e1775310
+    subject: 'tests: Update to new input file format'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 33716f1b7f4b5e6bd8d39dc4e851f40f82be2074
+    subject: 'package: Add capitano'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: minor
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 2ea6e4bad5651d6d30aed19ae1462f4553e18847
+    subject: 'generate: Refactor for using parameters; support envvar config'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: f05f35930547bb6ca04910033e24e57cbad8a04b
+    subject: Update tests
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 06c169a29d563db1ea2b909330d74a63da652696
+    subject: 'entrypoint: Update for also accepting PROXY_CONFIG parameter'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: fe4ea3ebd79aa64cf85546bb3a05dc1dbda020f4
+    subject: 'package: Add symlink for versionist checks'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: fe9be526b4fd0f15da952b203a178f6c8ebdfefb
+    subject: 'docker-entrypoint: Change mode'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: d60fb5fe0304b8489bee9e32a8a075b088bb0e6f
+    subject: 'gitignore: Add'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 39fa1be25bb71861acfef852f31135fd3d7f970a
+    subject: 'resin-base: Update'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 9aefd0b1bd4fedb708d09edca1007105c135ac12
+    subject: 'package: Add package file'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: minor
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: beef9944a946530ebf5014c33c5aea3eabd2207c
+    subject: 'generate-haproxy-cfg: Add generate-haproxy-cfg.js'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 03236c10a5b0bbf22096fff516b375a6eb9af1e0
+    subject: 'dockerfile: Build generate-haproxy-cfg dependencies'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: af42ee4e89b0fa3f2f8d92d6e5c92f6c2f81986c
+    subject: 'generate-haproxy-cfg: Make executable'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 964d7548f44fa24fdfcd2bc3e05c0859b2a95b6f
+    subject: 'docker-entrypoint: Incluge HAProxy config generation'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 2cede8872fa97b02af6ef094abad9ea5b8cbcbd1
+    subject: 'dockerfile: Fix npm ERR! write after end random errors'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 50b52d0651d85d6f01c346103f60e9a247a9c9d7
+    subject: 'generate-haproxy: Convert to library'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 54e0d6cbccf885eea3e9676c7c3c2b97cf93df1c
+    subject: 'generate: Add generate.js'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 20548c97c71b006e87ec2f2e6810e5fb21a6a154
+    subject: Add .editorconfig
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: 9c75704040913afd19359658cdc5a248334c2cef
+    subject: 'docker-entrypoint: Use generate.js'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: ae46100e792110f1f3f127e39aaccafd6af85658
+    subject: 'package: Add test dependencies'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: c7985bfb002a227dfeb5497b61446d9cdcb07d38
+    subject: 'eslint: Add .eslintrc.yml'
+  - author: Michael Angelos Simos
+    body: ""
+    footers:
+      change-type: patch
+      signed-off-by: Michael Angelos Simos <michalis@resin.io>
+    hash: ffed0e5189cde8858a3653b9fd85bb54e9c57c7a
+    subject: Add tests
+  date: "2018-09-25T15:30:59Z"
+  version: 0.1.0
