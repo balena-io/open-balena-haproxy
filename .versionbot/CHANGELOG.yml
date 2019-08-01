@@ -1,4 +1,21 @@
 - commits:
+    - subject: 'defaults: Allows configuration of defaults'
+      hash: 1efb07f964ba57124faf0e7e1cec7894b003af76
+      body: |
+        Allows the configuration of HAproxy defaults via
+        text strings in a 'defaults' array section of the
+        config. This allows us to group them together and
+        importantly removes them from static config, as
+        well as provide more fine-tuning.
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Heds Simons <heds@balena.io>
+        signed-off-by: Heds Simons <heds@balena.io>
+      author: Heds Simons
+  version: 2.10.0
+  date: 2019-08-01T16:12:42.288Z
+- commits:
     - subject: Update open-balena-base to 8.0.1
       hash: f33a55875ed74e1cc0d84082b1d4e9ca5a16dc42
       body: |
