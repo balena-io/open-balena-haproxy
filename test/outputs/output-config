@@ -2,9 +2,10 @@ global
 tune.ssl.default-dh-param 1024
 
 defaults
-timeout connect 5000
-timeout client 60000
-timeout server 60000
+  timeout connect 5000
+  timeout client 60000
+  timeout server 60000
+  default-server init-addr none
 
 resolvers test-bridge-resolver
   nameserver test-dns-resolver 127.0.0.11:53
