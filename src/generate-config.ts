@@ -94,10 +94,11 @@ export interface ConfigurationEntry {
 
 /**
  * Configuration object type, converted from the JSON configuration file.
- * Each entry is a service name denoting a ConfigurationEntry object or
- * an set of resolver definitions.
+ * Each entry is a service name denoting a ConfigurationEntry object,
+ * a set of resolver definitions or default options.
  */
 export type Configuration = { [service: string]: ConfigurationEntry } & {
+	defaults: TextOption[];
 	resolvers: ServiceResolver[];
 };
 
@@ -171,13 +172,7 @@ let configuration: InternalConfig = {
  * @type {string}
  */
 let configurationString =
-	'global\n' +
-	'tune.ssl.default-dh-param 1024\n' +
-	'\n' +
-	'defaults\n' +
-	'timeout connect 5000\n' +
-	'timeout client 60000\n' +
-	'timeout server 60000\n';
+	'global\n' + 'tune.ssl.default-dh-param 1024\n' + '\n';
 
 /**
  * HAProxy back-end configuration string.
@@ -234,6 +229,26 @@ const statsGenerator = (entries: InternalFrontendEntry[]): string => {
 	return statsString;
 };
 
+/**
+ * Generates the default set based on input.
+ * @param options A set of default options to be added.
+ * @returns {string} The configuration output for the defaults.
+ */
+const defaultGenerator = (options: TextOption[]): string => {
+	let defaultsString = 'defaults\n';
+	for (const option of options) {
+		defaultsString += `  ${option}\n`;
+	}
+
+	console.log(defaultsString);
+	return defaultsString;
+};
+
+/**
+ * Generates a new resolver set based on the argument.
+ * @param resolver The resolve object to use
+ * @returns {string} The configuration output for the resolver.
+ */
 const resolverGenerator = (resolver: ServiceResolver): string => {
 	let resolversString = `\nresolvers ${resolver.id}\n`;
 
@@ -467,6 +482,11 @@ export async function GenerateHaproxyConfig(
 			: '';
 	const generateCerts = process.env.AUTOGENERATE_CERTS === 'true';
 	let certificateGenerator: Promise<string> | undefined;
+
+	// Generate defaults
+	if (config.defaults) {
+		configurationString += defaultGenerator(config.defaults);
+	}
 
 	// Generate name resolvers
 	if (config.resolvers) {
