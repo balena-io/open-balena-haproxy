@@ -1,4 +1,20 @@
 - commits:
+    - subject: >-
+        Upgrade haproxy to 1.8.23 When running Jellyfish via docker-compose,
+        haproxy process get stuck at 100% CPU, causing the oceans to boil
+        HAProxy 1.8.23 seems to not be affected. Plus, since 1.8.13 there were
+        lots of bug fixes
+      hash: 15a57ff8452cab08dfc1af6e5ad6cb9a422edcd5
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+        Signed-off-by: Federico Fissore <federico@balena.io>
+        signed-off-by: Federico Fissore <federico@balena.io>
+      author: Federico Fissore
+  version: 2.11.3
+  date: 2020-01-30T09:04:08.799Z
+- commits:
     - subject: Update open-balena-base to 9.0.5
       hash: c0bc14073ca0e5c872353723dbf8a8adff55f48a
       body: |
