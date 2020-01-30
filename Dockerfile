@@ -1,8 +1,8 @@
 FROM balena/open-balena-base:v9.0.5
 
 ENV HAPROXY_MAJOR 1.8
-ENV HAPROXY_VERSION 1.8.13
-ENV HAPROXY_SHA256 2bf5dafbb5f1530c0e67ab63666565de948591f8e0ee2a1d3c84c45e738220f1
+ENV HAPROXY_VERSION 1.8.23
+ENV HAPROXY_SHA256 de919164876ee0501e1ef01ca5ccc0d3bda2b96003f9d240f7b856010ccbf7eb
 
 # see https://sources.debian.net/src/haproxy/jessie/debian/rules/ for some helpful navigation of the possible "make" arguments
 RUN set -x \
