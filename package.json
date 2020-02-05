@@ -24,36 +24,36 @@
     ]
   },
   "dependencies": {
-    "balena-certificate-client": "^1.1.0",
-    "bluebird": "^3.5.3",
-    "capitano": "^1.8.2",
-    "lodash": "^4.17.11",
+    "balena-certificate-client": "^1.1.1",
+    "bluebird": "^3.7.2",
+    "capitano": "^1.9.1",
+    "lodash": "^4.17.15",
     "mz": "^2.7.0",
     "request": "^2.88.0",
-    "request-promise": "^4.2.2",
-    "temp": "^0.8.3"
+    "request-promise": "^4.2.5",
+    "temp": "^0.8.4"
   },
   "devDependencies": {
     "@types/app-root-path": "^1.2.4",
-    "@types/bluebird": "^3.5.24",
-    "@types/chai-as-promised": "^7.1.0",
-    "@types/lodash": "^4.14.118",
-    "@types/mocha": "^5.2.5",
+    "@types/bluebird": "^3.5.29",
+    "@types/chai-as-promised": "^7.1.2",
+    "@types/lodash": "^4.14.149",
+    "@types/mocha": "^5.2.7",
     "@types/mz": "0.0.32",
-    "@types/node": "^12.11.1",
-    "@types/request": "^2.48.1",
-    "@types/request-promise": "^4.1.42",
-    "@types/temp": "^0.8.32",
-    "app-root-path": "^2.1.0",
+    "@types/node": "^12.12.26",
+    "@types/request": "^2.48.4",
+    "@types/request-promise": "^4.1.45",
+    "@types/temp": "^0.8.34",
+    "app-root-path": "^2.2.1",
     "chai": "^4.2.0",
     "chai-as-promised": "^7.1.1",
-    "husky": "^1.2.0",
-    "lint-staged": "^8.1.0",
+    "husky": "^4.2.1",
+    "lint-staged": "^10.0.6",
     "mocha": "^5.2.0",
-    "nyc": "^13.1.0",
+    "nyc": "^13.3.0",
     "resin-lint": "^2.0.1",
     "ts-node": "^7.0.1",
-    "typescript": "^3.1.6"
+    "typescript": "^3.7.5"
   },
   "husky": {
     "hooks": {
@@ -64,8 +64,7 @@
   "lint-staged": {
     "*.ts": [
       "prettier --config ./node_modules/resin-lint/config/.prettierrc --write",
-      "resin-lint --typescript --no-prettier",
-      "git add"
+      "resin-lint --typescript --no-prettier"
     ]
   }
 }
