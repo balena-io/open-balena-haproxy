@@ -1,4 +1,14 @@
 - commits:
+    - subject: Update to haproxy 2.0.12
+      hash: 3533f6db3d4ae6dc25616c669bac1bed6b153215
+      body: ''
+      footer:
+        Change-type: major
+        change-type: major
+      author: Pagan Gazzard
+  version: 3.0.0
+  date: 2020-02-05T17:21:42.807Z
+- commits:
     - subject: Update dependencies
       hash: b25517aa8724a67fa7d5247a1f2daae941110b01
       body: ''
