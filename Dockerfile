@@ -1,8 +1,8 @@
 FROM balena/open-balena-base:v9.0.5
 
-ENV HAPROXY_MAJOR 1.8
-ENV HAPROXY_VERSION 1.8.23
-ENV HAPROXY_SHA256 de919164876ee0501e1ef01ca5ccc0d3bda2b96003f9d240f7b856010ccbf7eb
+ENV HAPROXY_MAJOR 2.0
+ENV HAPROXY_VERSION 2.0.12
+ENV HAPROXY_SHA256 7fcf5adb21cd78c4161902f9fcc8d7fc97e1562319a992cbda884436ca9602fd
 
 # see https://sources.debian.net/src/haproxy/jessie/debian/rules/ for some helpful navigation of the possible "make" arguments
 RUN set -x \
@@ -27,7 +27,7 @@ RUN set -x \
 	&& rm haproxy.tar.gz \
 	\
 	&& makeOpts=' \
-		TARGET=linux2628 \
+		TARGET=linux-glibc \
 		USE_LUA=1 LUA_INC=/usr/include/lua5.3 \
 		USE_OPENSSL=1 \
 		USE_PCRE=1 PCREDIR= \
