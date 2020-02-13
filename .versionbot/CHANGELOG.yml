@@ -1,4 +1,36 @@
 - commits:
+    - subject: Update open-balena-base to 9.2.0
+      hash: 0ab03d1e81b9d1d8b4808237a90a53e08e44aea2
+      body: |
+        Update open-balena-base from 9.0.5 to 9.2.0
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 12.16.0
+              hash: 2d290c934fae54993e435f82b22943570b1a106e
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.2.0
+          date: 2020-02-11T23:55:03.682Z
+        - commits:
+            - subject: Update nodejs to 12.15.0 and npm to 6.13.7
+              hash: 4d1e2434b642a8f892246b0e9c3fd08bca774488
+              body: ''
+              footer:
+                Change-type: minor
+                change-type: minor
+              author: Pagan Gazzard
+          version: open-balena-base-9.1.0
+          date: 2020-02-06T11:51:44.777Z
+  version: 3.0.1
+  date: 2020-02-13T15:37:42.535Z
+- commits:
     - subject: Update to haproxy 2.0.12
       hash: 3533f6db3d4ae6dc25616c669bac1bed6b153215
       body: ''
