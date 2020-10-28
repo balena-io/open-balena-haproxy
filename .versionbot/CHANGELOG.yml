@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix dockerfile bump
+      hash: a8011b4270e25381d35ce764ab9484cc91a08d53
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 3.1.1
+  date: 2020-10-28T14:39:44.588Z
+- commits:
     - subject: Update open-balena-base to 11.0.0
       hash: 310f1436f9cc4af6614b147874320ab5270f6ae2
       body: |
