@@ -1,4 +1,15 @@
 - commits:
+    - subject: Fix error when frontend has no http protocol
+      hash: 6e041f239320b695feb0b0be7702cf340e2954a9
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Kakhaber
+      nested: []
+  version: 3.1.5
+  date: 2021-01-25T08:01:59.072Z
+- commits:
     - subject: Update open-balena-base to 11.0.4
       hash: e6e56da2108e419057a9230b6cbe0e71ccf74dcb
       body: |
