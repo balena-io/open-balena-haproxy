@@ -336,7 +336,9 @@ const generateTcpConfig = (
 	if (!_.get(configuration, ['frontend', 'https', port])) {
 		confStr +=
 			`\nfrontend tcp_${port}_in\n` + 'mode tcp\n' + `bind *:${port}\n`;
-		confStr += statsGenerator(configuration['frontend']['http'][port]);
+		if (_.has(configuration, ['frontend', 'http', port])) {
+			confStr += statsGenerator(configuration['frontend']['http'][port]);
+		}
 		_.forEach(configuration['frontend']['tcp'][port], acl => {
 			if (acl.backendName) {
 				confStr += `default_backend ${acl.backendName}\n`;
