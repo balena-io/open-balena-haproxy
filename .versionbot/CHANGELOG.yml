@@ -1,4 +1,15 @@
 - commits:
+    - subject: fix readme layout
+      hash: 0d3597ada616dd791632b6421d926f1a472b3645
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Martin Rauscher
+      nested: []
+  version: 3.1.6
+  date: 2021-02-11T15:20:49.514Z
+- commits:
     - subject: Fix error when frontend has no http protocol
       hash: 6e041f239320b695feb0b0be7702cf340e2954a9
       body: ''
