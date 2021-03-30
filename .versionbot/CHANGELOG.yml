@@ -1,4 +1,15 @@
 - commits:
+    - subject: 'README: Fix missed resin to balena rename'
+      hash: 033e3ab7ea94374973458d4dd761d1decc86ee8e
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Thodoris Greasidis
+      nested: []
+  version: 3.1.9
+  date: 2021-03-30T14:39:14.767Z
+- commits:
     - subject: Update open-balena-base to 11.1.0
       hash: 27cc9a26214b422c27be2f5abeebf07d6a51a9b6
       body: |
