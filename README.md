@@ -1,7 +1,7 @@
 Balena HAProxy
 ==============
 
-HA proxy component for resin environments (bob, onprem, etc)
+HA proxy component for balena environments (bob, onprem, etc)
 
 This container expects a config.json file, mounted in `/.balena/config.json`
 and builds the corresponding haproxy.config and certificate files.
