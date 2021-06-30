@@ -1,4 +1,15 @@
 - commits:
+    - subject: Delete .github directory
+      hash: 88a55526014e6119e9a09cf739374d98cf95c2c4
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: dfunckt
+      nested: []
+  version: 3.1.12
+  date: 2021-06-30T15:35:23.361Z
+- commits:
     - subject: Update open-balena-base to 11.2.0
       hash: 24a8f5cd4a57455c0cf63bd35bfcbccd383ea411
       body: |
