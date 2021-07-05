@@ -1,6 +1,6 @@
 {
   "name": "generate-haproxy-cfg",
-  "version": "3.1.11",
+  "version": "3.1.12",
   "description": "A tool for generating haproxy.cfg",
   "private": true,
   "scripts": {
@@ -66,5 +66,8 @@
       "prettier --config ./node_modules/resin-lint/config/.prettierrc --write",
       "resin-lint --typescript --no-prettier"
     ]
+  },
+  "versionist": {
+    "publishedAt": "2021-07-05T17:11:36.890Z"
   }
 }
