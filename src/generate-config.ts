@@ -173,6 +173,9 @@ let configuration: InternalConfig = {
  */
 let configurationString =
 	'global\n' + 'tune.ssl.default-dh-param 1024\n' + '\n';
+	'tune.ssl.default-dh-param 1024\n' +
+	'log stdout  format raw  local0 debug\n' +
+	'\n';
 
 /**
  * HAProxy back-end configuration string.
@@ -235,7 +238,10 @@ const statsGenerator = (entries: InternalFrontendEntry[]): string => {
  * @returns {string} The configuration output for the defaults.
  */
 const defaultGenerator = (options: TextOption[]): string => {
-	let defaultsString = 'defaults\n';
+	let defaultsString = 'defaults\n' +
+		'log global\n' +
+		'option httplog\n' +
+		'option tcplog\n';
 	for (const option of options) {
 		defaultsString += `  ${option}\n`;
 	}
@@ -438,11 +444,20 @@ const generateHttpsConfig = (
 			'mode tcp\n' +
 			`bind *:${port}\n` +
 			'tcp-request inspect-delay 2s\n' +
+			'tcp-request content capture req.ssl_sni len 256\n' +
 			'tcp-request content accept if { req.ssl_hello_type 1 }\n' +
+			'log-format "Got SNI: %[capture.req.hdr(0)]"\n' +
 			'acl is_ssl req.ssl_ver 2:3.4\n' +
+			`use_backend tls_devices_backend if { req.ssl_sni -m end .${process.env.DEVICE_URLS_BASE} }\n` +
 			`use_backend redirect_to_${freePort}_in if is_ssl\n` +
 			`use_backend ${tcpBackend} if !is_ssl\n` +
-			'\n' +
+			'\n\n' +
+			'# This is the backend used by devices that have TLS terminate turned ON.\n' +
+			'backend tls_devices_backend\n' +
+			'mode  tcp\n' +
+			'balance roundrobin\n' +
+			'server devices devices:443 resolvers docker-bridge-resolver resolve-prefer ipv4 send-proxy check-send-proxy port 443\n' +
+			'\n\n' +
 			`backend redirect_to_${freePort}_in\n` +
 			'mode tcp\n' +
 			'balance roundrobin\n' +
@@ -451,6 +466,8 @@ const generateHttpsConfig = (
 			`frontend ${freePort}_in\n` +
 			'mode http\n' +
 			'option forwardfor\n' +
+			'capture request header user-agent len 256\n' +
+			`log-format "Inside frontend ${freePort}_in, got URI: %[capture.req.uri], src = %[src], backend = %s, backend_ip = %si, backend_port = %sp, method = %[capture.req.method]"\n` +
 			`bind 127.0.0.1:${freePort} ssl crt ${crtPath} accept-proxy\n` +
 			'reqadd X-Forwarded-Proto:\\ https\n';
 		confStr += statsGenerator(configuration['frontend']['https'][port]);
