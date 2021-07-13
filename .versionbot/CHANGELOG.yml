@@ -1,4 +1,15 @@
 - commits:
+    - subject: Revert
+      hash: e67912448ad8efc0f6911b0fb482af633ef89125
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 3.1.14
+  date: 2021-07-13T20:21:40.161Z
+- commits:
     - subject: Adds device URL support
       hash: a55015e1327179dac56cd607361e4d9a356c27ba
       body: >
