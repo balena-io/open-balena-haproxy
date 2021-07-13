@@ -1,6 +1,6 @@
 {
   "name": "generate-haproxy-cfg",
-  "version": "3.1.12",
+  "version": "3.1.13",
   "description": "A tool for generating haproxy.cfg",
   "private": true,
   "scripts": {
@@ -68,6 +68,6 @@
     ]
   },
   "versionist": {
-    "publishedAt": "2021-07-05T17:11:36.890Z"
+    "publishedAt": "2021-07-13T19:01:53.658Z"
   }
 }

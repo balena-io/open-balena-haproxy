@@ -1,4 +1,17 @@
 - commits:
+    - subject: Adds device URL support
+      hash: a55015e1327179dac56cd607361e4d9a356c27ba
+      body: >
+        * allows haproxy runnig on balena devices to accept wildcard hostheader
+        on port 80 (via device URLs v1)
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 3.1.13
+  date: 2021-07-13T19:01:53.578Z
+- commits:
     - subject: Update open-balena-base to 11.3.2
       hash: 0880d7ad95adcb24bc9590baacae927b96ad3dc5
       body: |
