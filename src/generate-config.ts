@@ -373,6 +373,15 @@ const generateHttpConfig = (
 		'option forwardfor\n' +
 		`bind *:${port}\n` +
 		'reqadd X-Forwarded-Proto:\\ http\n';
+
+	// balena device URL v1 support
+	if (process.env.BALENA_DEVICE_UUID) {
+		confStr +=
+			'\n' +
+			'acl host_ui_backend_via_device_url hdr_reg(host) -i ^.*$\n' +
+			'use_backend ui_backend if host_ui_backend_via_device_url\n';
+	}
+
 	confStr += statsGenerator(configuration['frontend']['http'][port]);
 	_.forEach(configuration['frontend']['http'][port], acl => {
 		if (acl.backendName) {
