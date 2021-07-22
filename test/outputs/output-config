@@ -1,7 +1,11 @@
 global
 tune.ssl.default-dh-param 1024
+log stdout  format raw  local0 debug
 
 defaults
+  log global
+  option httplog
+  option tcplog
   timeout connect 5000
   timeout client 60000
   timeout server 60000
@@ -37,10 +41,21 @@ frontend https_443_in
 mode tcp
 bind *:443
 tcp-request inspect-delay 2s
+tcp-request content capture req.ssl_sni len 256
 tcp-request content accept if { req.ssl_hello_type 1 }
+log-format "Got SNI: %[capture.req.hdr(0)]"
 acl is_ssl req.ssl_ver 2:3.4
+use_backend tls_devices_backend if { req.ssl_sni -m end .undefined }
 use_backend redirect_to_1000_in if is_ssl
 use_backend vpn_backend if !is_ssl
+
+
+# This is the backend used by devices that have TLS terminate turned ON.
+backend tls_devices_backend
+mode  tcp
+balance roundrobin
+server devices devices:443 resolvers docker-bridge-resolver resolve-prefer ipv4 send-proxy check-send-proxy port 443
+
 
 backend redirect_to_1000_in
 mode tcp
@@ -50,6 +65,8 @@ server localhost 127.0.0.1:1000 send-proxy-v2
 frontend 1000_in
 mode http
 option forwardfor
+capture request header user-agent len 256
+log-format "Inside frontend 1000_in, got URI: %[capture.req.uri], src = %[src], backend = %s, backend_ip = %si, backend_port = %sp, method = %[capture.req.method]"
 bind 127.0.0.1:1000 ssl crt {{tmp}}/chain.pem accept-proxy
 reqadd X-Forwarded-Proto:\ https
 

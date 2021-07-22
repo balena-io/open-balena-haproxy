@@ -172,7 +172,7 @@ let configuration: InternalConfig = {
  * @type {string}
  */
 let configurationString =
-	'global\n' + 'tune.ssl.default-dh-param 1024\n' + '\n';
+	'global\n' +
 	'tune.ssl.default-dh-param 1024\n' +
 	'log stdout  format raw  local0 debug\n' +
 	'\n';
@@ -238,10 +238,11 @@ const statsGenerator = (entries: InternalFrontendEntry[]): string => {
  * @returns {string} The configuration output for the defaults.
  */
 const defaultGenerator = (options: TextOption[]): string => {
-	let defaultsString = 'defaults\n' +
-		'log global\n' +
-		'option httplog\n' +
-		'option tcplog\n';
+	let defaultsString =
+		'defaults\n' +
+		'  log global\n' +
+		'  option httplog\n' +
+		'  option tcplog\n';
 	for (const option of options) {
 		defaultsString += `  ${option}\n`;
 	}
@@ -448,7 +449,9 @@ const generateHttpsConfig = (
 			'tcp-request content accept if { req.ssl_hello_type 1 }\n' +
 			'log-format "Got SNI: %[capture.req.hdr(0)]"\n' +
 			'acl is_ssl req.ssl_ver 2:3.4\n' +
-			`use_backend tls_devices_backend if { req.ssl_sni -m end .${process.env.DEVICE_URLS_BASE} }\n` +
+			`use_backend tls_devices_backend if { req.ssl_sni -m end .${
+				process.env.DEVICE_URLS_BASE
+			} }\n` +
 			`use_backend redirect_to_${freePort}_in if is_ssl\n` +
 			`use_backend ${tcpBackend} if !is_ssl\n` +
 			'\n\n' +

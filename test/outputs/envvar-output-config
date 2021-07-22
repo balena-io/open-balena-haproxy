@@ -1,7 +1,11 @@
 global
 tune.ssl.default-dh-param 1024
+log stdout  format raw  local0 debug
 
 defaults
+  log global
+  option httplog
+  option tcplog
   timeout connect 5000
   timeout client 60000
   timeout server 60000
