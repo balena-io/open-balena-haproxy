@@ -1,4 +1,31 @@
 - commits:
+    - subject: Update open-balena-base to 11.3.3
+      hash: 0ad7921c2101158d1ed723d7202ffcb92651b450
+      body: |
+        Update open-balena-base from 11.3.2 to 11.3.3
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Add parallel HOSTs and env vars
+              hash: 7ef7a8e470f195afec8a104e837f901c9f0d1044
+              body: >
+                * allows removal of BALENA_ prefixes across all products and
+                services (aside from reserved within balenaOS/Supervisor)
+
+                * made balena-root-ca service a dependency of confd.service
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.3
+          date: 2021-07-29T16:00:40.773Z
+  version: 3.1.15
+  date: 2021-07-29T16:30:22.253Z
+- commits:
     - subject: Revert
       hash: e67912448ad8efc0f6911b0fb482af633ef89125
       body: ''
