@@ -1,4 +1,42 @@
 - commits:
+    - subject: Update open-balena-base to 11.3.5
+      hash: 3f66eadc4bc9489f33d89d479852c283a8a6e9a2
+      body: |
+        Update open-balena-base from 11.3.3 to 11.3.5
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested:
+        - commits:
+            - subject: Update nodejs to 14.17.4 and npm to 6.14.14
+              hash: a4ebaa82f22a5aa4dc134c659e6aa117364d116d
+              body: ''
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: Pagan Gazzard
+              nested: []
+          version: open-balena-base-11.3.5
+          date: 2021-07-30T17:16:32.586Z
+        - commits:
+            - subject: Correct env var name and sort
+              hash: 88c075b8f7ce7ad74fbe24bdd28c3713c3730ca4
+              body: >
+                * TOKEN_AUTH_REALM => REGISTRY2_TOKEN_AUTH_REALM
+
+                * REGISTRY2_TOKEN_AUTH_REALM is the new name for
+                BALENA_TOKEN_AUTH_REALM
+              footer:
+                Change-type: patch
+                change-type: patch
+              author: ab77
+              nested: []
+          version: open-balena-base-11.3.4
+          date: 2021-07-30T00:05:49.402Z
+  version: 3.1.16
+  date: 2021-08-02T12:50:09.306Z
+- commits:
     - subject: Update open-balena-base to 11.3.3
       hash: 0ad7921c2101158d1ed723d7202ffcb92651b450
       body: |
