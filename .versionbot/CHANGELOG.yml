@@ -1,4 +1,15 @@
 - commits:
+    - subject: Remove deprecated metadata
+      hash: 1224150056b8357f2652515a6fe19ec3b6c58567
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.0.1
+  date: 2021-08-18T17:24:19.358Z
+- commits:
     - subject: Simplify to use official image
       hash: 85a7c3ab7927776190643797b9bc3ea2ca5b5ed4
       body: |
