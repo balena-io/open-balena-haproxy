@@ -1,4 +1,18 @@
 - commits:
+    - subject: Simplify to use official image
+      hash: 85a7c3ab7927776190643797b9bc3ea2ca5b5ed4
+      body: |
+        * remove JSON transaltion layer
+        * closely based on haproxy from open-balena
+        * remove default config (default stub supplied)
+      footer:
+        Change-type: major
+        change-type: major
+      author: ab77
+      nested: []
+  version: 4.0.0
+  date: 2021-08-18T17:14:16.758Z
+- commits:
     - subject: Update open-balena-base to 11.3.9
       hash: 43240b80450d14e6244817c63139a954fbab6e39
       body: |
