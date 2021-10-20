@@ -14,6 +14,7 @@ RUN addgroup haproxy root \
 COPY cors.lua /usr/local/etc/haproxy/
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
 COPY start-haproxy.sh /start-haproxy
+COPY errors/* /etc/haproxy/errors/
 
 USER haproxy
 
