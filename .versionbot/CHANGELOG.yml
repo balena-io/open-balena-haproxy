@@ -1,4 +1,16 @@
 - commits:
+    - subject: Refactor certificate handling
+      hash: 66643d462634b415832c47f27f7960299d7fcb5e
+      body: |
+        * add error pages
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.0.2
+  date: 2021-10-21T00:02:17.091Z
+- commits:
     - subject: Remove deprecated metadata
       hash: 1224150056b8357f2652515a6fe19ec3b6c58567
       body: ''
