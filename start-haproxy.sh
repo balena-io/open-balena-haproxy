@@ -1,6 +1,6 @@
 #!/bin/sh
 
-set -ex
+set -exa
 
 CERT_CHAIN_PATH=${CERT_CHAIN_PATH:-/certs/export/chain.pem}
 
