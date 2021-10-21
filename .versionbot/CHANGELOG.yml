@@ -1,4 +1,15 @@
 - commits:
+    - subject: Implicitly export environment
+      hash: cb91f2caf209d592e3d0e382c89d2a0752a0c097
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.0.3
+  date: 2021-10-21T22:08:45.641Z
+- commits:
     - subject: Refactor certificate handling
       hash: 66643d462634b415832c47f27f7960299d7fcb5e
       body: |
