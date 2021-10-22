@@ -4,13 +4,12 @@ set -exa
 
 CERT_CHAIN_PATH=${CERT_CHAIN_PATH:-/certs/export/chain.pem}
 
-mkdir -p "$(dirname "${CERT_CHAIN_PATH}")"
-
 if ! [ -f "${CERT_CHAIN_PATH}" ]; then
     if [ -n "${HAPROXY_CRT}" ] \
       && [ -n "${HAPROXY_KEY}" ] \
       && [ -n "${ROOT_CA}" ]; then
         echo "Assembling certificate chain..." \
+          && mkdir -p "$(dirname "${CERT_CHAIN_PATH}")" \
           && echo "${HAPROXY_CRT}" | base64 -d \
           && echo "${HAPROXY_KEY}" | base64 -d \
           && echo "${ROOT_CA}" | base64 -d > "${CERT_CHAIN_PATH}"
