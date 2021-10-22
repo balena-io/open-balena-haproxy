@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update documentation
+      hash: 14a07c6d3de9aaee5d803709b5cb16c0603fe460
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.0.5
+  date: 2021-10-22T14:42:50.715Z
+- commits:
     - subject: Optionally create directory
       hash: 53c9dd8d09b93ff0ccc925e653a2041e1a16b833
       body: ''
