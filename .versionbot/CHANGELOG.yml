@@ -1,4 +1,15 @@
 - commits:
+    - subject: Optionally create directory
+      hash: 53c9dd8d09b93ff0ccc925e653a2041e1a16b833
+      body: ''
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.0.4
+  date: 2021-10-22T02:37:22.587Z
+- commits:
     - subject: Implicitly export environment
       hash: cb91f2caf209d592e3d0e382c89d2a0752a0c097
       body: ''
