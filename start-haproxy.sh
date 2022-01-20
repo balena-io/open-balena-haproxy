@@ -1,18 +1,26 @@
 #!/bin/sh
 
-set -exa
+set -ea
+
+[ "${VERBOSE}" = 'true' ] && set -x
 
 CERT_CHAIN_PATH=${CERT_CHAIN_PATH:-/certs/export/chain.pem}
 
 if ! [ -f "${CERT_CHAIN_PATH}" ]; then
-    if [ -n "${HAPROXY_CRT}" ] \
-      && [ -n "${HAPROXY_KEY}" ] \
-      && [ -n "${ROOT_CA}" ]; then
-        echo "Assembling certificate chain..." \
-          && mkdir -p "$(dirname "${CERT_CHAIN_PATH}")" \
-          && echo "${HAPROXY_CRT}" | base64 -d \
-          && echo "${HAPROXY_KEY}" | base64 -d \
-          && echo "${ROOT_CA}" | base64 -d > "${CERT_CHAIN_PATH}"
+    if [ -n "${HAPROXY_CRT}" ] && [ -n "${HAPROXY_KEY}" ]; then
+        tmpcfg="$(mktemp)"
+        echo "Assembling certificate chain..."
+        mkdir -p "$(dirname "${CERT_CHAIN_PATH}")"
+        echo "${HAPROXY_CRT}" | base64 -d > "${tmpcfg}"
+
+        # certificates issued by private CA
+        if [ -n "${ROOT_CA}" ]; then
+            echo "${ROOT_CA}" | base64 -d "${tmpcfg}"
+        fi
+
+        echo "${HAPROXY_KEY}" | base64 -d > "${tmpcfg}"
+        cat < "${tmpcfg}" > "${CERT_CHAIN_PATH}"
+        rm -f "${tmpcfg}"
     fi
 fi
 
