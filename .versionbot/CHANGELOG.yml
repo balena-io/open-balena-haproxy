@@ -1,4 +1,17 @@
 - commits:
+    - subject: Public/private chain via env
+      hash: 58da5762e8ab637d2dc1af8c64c26429d192c2d4
+      body: |
+        * update haproxy to v2.5
+        * allow public/private certificate chain to be specified via env-vars
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.0.6
+  date: 2022-01-20T18:22:16.687Z
+- commits:
     - subject: Update documentation
       hash: 14a07c6d3de9aaee5d803709b5cb16c0603fe460
       body: ''
