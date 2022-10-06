@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch from balenaCI to flowzone
+      hash: 1c70938a3977dbbb1200f017851ac138d1235a94
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Pagan Gazzard
+      nested: []
+  version: 4.0.8
+  title: ""
+  date: 2022-10-06T23:03:30.655Z
+- commits:
     - subject: Update haproxy from 2.5 to 2.6
       hash: ba3b71a4330b8550acefdb41435132ba1663d4e4
       body: ""
