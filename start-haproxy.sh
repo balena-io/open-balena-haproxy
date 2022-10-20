@@ -31,17 +31,17 @@ echo "haproxy started with pid "$HAPROXY_PID
 
 # Trap and forward USR1 ( graceful stop ) to haproxy
 _usr1() { 
-  echo "Caught SIGUSR1 signal. Forwarding to haproxy" 
+  echo "Caught SIGUSR1 signal!" 
   kill -USR1 "$HAPROXY_PID" 2>/dev/null
 }
-trap _usr1 SIGUSR1
+trap _usr1 USR1
 
 # Trap and forward TERM ( hard stop ) to haproxy
 _term() { 
-  echo "Caught SIGTERM signal. Forwarding to haproxy" 
+  echo "Caught SIGTERM signal!" 
   kill -TERM "$HAPROXY_PID" 2>/dev/null
 }
-trap _term SIGTERM
+trap _term TERM
 
 ./monitor_certs.sh $HAPROXY_PID &
 
