@@ -1,4 +1,19 @@
 - commits:
+    - subject: Change the startup script to forward signals to the haproxy process to
+        be able to support graceful stop
+      hash: 00a47e5845bdc4f4e3f8b0eac640b6b0bb121360
+      body: ""
+      footer:
+        Change-type: minor
+        change-type: minor
+        Signed-off-by: Ramiro Gonzalez <ramiro.gonzalez@balena.io>
+        signed-off-by: Ramiro Gonzalez <ramiro.gonzalez@balena.io>
+      author: Ramiro González Maciel
+      nested: []
+  version: 4.1.0
+  title: ""
+  date: 2022-10-26T02:29:15.128Z
+- commits:
     - subject: Switch from balenaCI to flowzone
       hash: 1c70938a3977dbbb1200f017851ac138d1235a94
       body: ""
@@ -228,8 +243,8 @@
             - subject: Add parallel HOSTs and env vars
               hash: 7ef7a8e470f195afec8a104e837f901c9f0d1044
               body: >
-                * allows removal of BALENA_ prefixes across all products and
-                services (aside from reserved within balenaOS/Supervisor)
+                * allows removal of BALENA_ prefixes across all products and services
+                (aside from reserved within balenaOS/Supervisor)
 
                 * made balena-root-ca service a dependency of confd.service
               footer:
@@ -256,8 +271,8 @@
     - subject: Adds device URL support
       hash: a55015e1327179dac56cd607361e4d9a356c27ba
       body: >
-        * allows haproxy runnig on balena devices to accept wildcard hostheader
-        on port 80 (via device URLs v1)
+        * allows haproxy runnig on balena devices to accept wildcard hostheader on
+        port 80 (via device URLs v1)
       footer:
         Change-type: patch
         change-type: patch
@@ -941,8 +956,7 @@
             - subject: Add a base image without systemd
               hash: d7e44872d9594b9ef0557f78b8f38c6e449bbe54
               body: >
-                Also configures circleCI to publish no-systemd variant in
-                parallel.
+                Also configures circleCI to publish no-systemd variant in parallel.
               footer:
                 Change-type: minor
                 change-type: minor
