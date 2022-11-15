@@ -6,22 +6,20 @@ set -ea
 
 CERT_CHAIN_PATH=${CERT_CHAIN_PATH:-/certs/export/chain.pem}
 
-if ! [ -f "${CERT_CHAIN_PATH}" ]; then
-    if [ -n "${HAPROXY_CRT}" ] && [ -n "${HAPROXY_KEY}" ]; then
-        tmpcfg="$(mktemp)"
-        echo "Assembling certificate chain..."
-        mkdir -p "$(dirname "${CERT_CHAIN_PATH}")"
-        echo "${HAPROXY_CRT}" | base64 -d > "${tmpcfg}"
+if [ -n "${HAPROXY_CRT}" ] && [ -n "${HAPROXY_KEY}" ]; then
+	tmpcfg="$(mktemp)"
+	echo "Assembling certificate chain..."
+	mkdir -p "$(dirname "${CERT_CHAIN_PATH}")"
+	echo "${HAPROXY_CRT}" | base64 -d > "${tmpcfg}"
 
-        # certificates issued by private CA
-        if [ -n "${ROOT_CA}" ]; then
-            echo "${ROOT_CA}" | base64 -d "${tmpcfg}"
-        fi
+	# certificates issued by private CA
+	if [ -n "${ROOT_CA}" ]; then
+		echo "${ROOT_CA}" | base64 -d >> "${tmpcfg}"
+	fi
 
-        echo "${HAPROXY_KEY}" | base64 -d > "${tmpcfg}"
-        cat < "${tmpcfg}" > "${CERT_CHAIN_PATH}"
-        rm -f "${tmpcfg}"
-    fi
+	echo "${HAPROXY_KEY}" | base64 -d >> "${tmpcfg}"
+	cat < "${tmpcfg}" > "${CERT_CHAIN_PATH}"
+	rm -f "${tmpcfg}"
 fi
 
 
@@ -30,16 +28,16 @@ HAPROXY_PID=$!
 echo "haproxy started with pid "$HAPROXY_PID
 
 # Trap and forward USR1 ( graceful stop ) to haproxy
-_usr1() { 
-  echo "Caught SIGUSR1 signal!" 
-  kill -USR1 "$HAPROXY_PID" 2>/dev/null
+_usr1() {
+    echo "Caught SIGUSR1 signal!"
+    kill -USR1 "$HAPROXY_PID" 2>/dev/null
 }
 trap _usr1 USR1
 
 # Trap and forward TERM ( hard stop ) to haproxy
-_term() { 
-  echo "Caught SIGTERM signal!" 
-  kill -TERM "$HAPROXY_PID" 2>/dev/null
+_term() {
+    echo "Caught SIGTERM signal!"
+    kill -TERM "$HAPROXY_PID" 2>/dev/null
 }
 trap _term TERM
 
