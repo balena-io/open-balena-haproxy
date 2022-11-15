@@ -1,4 +1,16 @@
 - commits:
+    - subject: Fix startup script
+      hash: 28172cf3aaafb8d01169747a06060784f746eb6d
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.1.1
+  title: ""
+  date: 2022-11-15T23:05:57.877Z
+- commits:
     - subject: Change the startup script to forward signals to the haproxy process to
         be able to support graceful stop
       hash: 00a47e5845bdc4f4e3f8b0eac640b6b0bb121360
