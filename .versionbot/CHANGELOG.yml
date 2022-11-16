@@ -1,4 +1,16 @@
 - commits:
+    - subject: Switch accounts at runtime
+      hash: 10418eb98f9d9ba906a68ba60aca7547300d6632
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.1.2
+  title: ""
+  date: 2022-11-16T00:01:21.028Z
+- commits:
     - subject: Fix startup script
       hash: 28172cf3aaafb8d01169747a06060784f746eb6d
       body: ""
