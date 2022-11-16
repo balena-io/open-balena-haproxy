@@ -10,15 +10,14 @@ RUN addgroup haproxy root \
     && chown -R haproxy /etc/ssl/private \
     && apk add --no-cache --update \
     curl \
+    inotify-tools \
     openssl \
-    inotify-tools
+    sudo
 
 COPY cors.lua /usr/local/etc/haproxy/
 COPY haproxy.cfg /usr/local/etc/haproxy/haproxy.cfg
 COPY start-haproxy.sh /start-haproxy
 COPY monitor_certs.sh /monitor_certs.sh
 COPY errors/* /etc/haproxy/errors/
-
-USER haproxy
 
 CMD /start-haproxy
