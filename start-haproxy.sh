@@ -8,6 +8,7 @@ CERT_CHAIN_PATH=${CERT_CHAIN_PATH:-/certs/export/chain.pem}
 
 if [ -n "${HAPROXY_CRT}" ] && [ -n "${HAPROXY_KEY}" ]; then
 	tmpcfg="$(mktemp)"
+
 	echo "Assembling certificate chain..."
 	mkdir -p "$(dirname "${CERT_CHAIN_PATH}")"
 	echo "${HAPROXY_CRT}" | base64 -d > "${tmpcfg}"
@@ -18,6 +19,7 @@ if [ -n "${HAPROXY_CRT}" ] && [ -n "${HAPROXY_KEY}" ]; then
 	fi
 
 	echo "${HAPROXY_KEY}" | base64 -d >> "${tmpcfg}"
+	rm -f "${CERT_CHAIN_PATH}"
 	cat < "${tmpcfg}" > "${CERT_CHAIN_PATH}"
 	rm -f "${tmpcfg}"
 fi
