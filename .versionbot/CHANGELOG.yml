@@ -1,4 +1,19 @@
 - commits:
+    - subject: Update haproxy Docker tag to v2.7
+      hash: ae602ca7192683cfadacc3125c1ddd9eefb611be
+      body: |
+        Update haproxy to 2.7
+
+        Update haproxy from 2.6 to 2.7
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Renovate Bot
+      nested: []
+  version: 4.2.0
+  title: ""
+  date: 2022-12-07T03:16:25.859Z
+- commits:
     - subject: Remove link
       hash: 35a29cbec18e2878c683de42405318098bbdcaaa
       body: ""
