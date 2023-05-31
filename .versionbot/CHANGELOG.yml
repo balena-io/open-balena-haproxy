@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update haproxy Docker tag to v2.8
+      hash: aaa2347879d5fa25c36514fd52341248995a742e
+      body: |
+        Update haproxy from 2.7 to 2.8
+      footer:
+        Change-type: minor
+        change-type: minor
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 4.3.0
+  title: ""
+  date: 2023-05-31T20:02:04.713Z
+- commits:
     - subject: Update flowzone.yml
       hash: 54b163c0574c8c90d3c69a6b342c0d222b4b44fc
       body: ""
