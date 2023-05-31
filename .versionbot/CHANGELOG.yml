@@ -1,4 +1,16 @@
 - commits:
+    - subject: Update flowzone.yml
+      hash: 54b163c0574c8c90d3c69a6b342c0d222b4b44fc
+      body: ""
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Kyle Harding
+      nested: []
+  version: 4.2.1
+  title: ""
+  date: 2023-05-31T15:05:27.324Z
+- commits:
     - subject: Update haproxy Docker tag to v2.7
       hash: ae602ca7192683cfadacc3125c1ddd9eefb611be
       body: |
@@ -294,8 +306,8 @@
             - subject: Add parallel HOSTs and env vars
               hash: 7ef7a8e470f195afec8a104e837f901c9f0d1044
               body: >
-                * allows removal of BALENA_ prefixes across all products and services
-                (aside from reserved within balenaOS/Supervisor)
+                * allows removal of BALENA_ prefixes across all products and
+                services (aside from reserved within balenaOS/Supervisor)
 
                 * made balena-root-ca service a dependency of confd.service
               footer:
@@ -322,8 +334,8 @@
     - subject: Adds device URL support
       hash: a55015e1327179dac56cd607361e4d9a356c27ba
       body: >
-        * allows haproxy runnig on balena devices to accept wildcard hostheader on
-        port 80 (via device URLs v1)
+        * allows haproxy runnig on balena devices to accept wildcard hostheader
+        on port 80 (via device URLs v1)
       footer:
         Change-type: patch
         change-type: patch
@@ -1007,7 +1019,8 @@
             - subject: Add a base image without systemd
               hash: d7e44872d9594b9ef0557f78b8f38c6e449bbe54
               body: >
-                Also configures circleCI to publish no-systemd variant in parallel.
+                Also configures circleCI to publish no-systemd variant in
+                parallel.
               footer:
                 Change-type: minor
                 change-type: minor
