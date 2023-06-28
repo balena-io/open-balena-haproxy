@@ -1,4 +1,15 @@
 - commits:
+    - subject: Update CA certs
+      hash: e90d139ffd7638874e0a9c336bc3f657b0174e8e
+      body: ""
+      footer:
+        change-type: patch
+      author: ab77
+      nested: []
+  version: 4.3.1
+  title: ""
+  date: 2023-06-28T16:13:06.266Z
+- commits:
     - subject: Update haproxy Docker tag to v2.8
       hash: aaa2347879d5fa25c36514fd52341248995a742e
       body: |
