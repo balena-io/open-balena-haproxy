@@ -4,7 +4,27 @@ set -ea
 
 [ "${VERBOSE}" = 'true' ] && set -x
 
+CERTS=${CERTS:-/certs}
 CERT_CHAIN_PATH=${CERT_CHAIN_PATH:-/certs/export/chain.pem}
+
+function update_ca_certificates() {
+    # only set CA bundle if using private certificate chain
+    if [[ -e "${CERTS}/ca-bundle.pem" ]]; then
+        if [[ "$(readlink -f "${CERTS}/export/chain.pem")" =~ \/private\/ ]]; then
+            mkdir -p /usr/local/share/ca-certificates
+            cat < "${CERTS}/root-ca.pem" > /usr/local/share/ca-certificates/balenaRootCA.crt
+            cat < "${CERTS}/server-ca.pem" > /usr/local/share/ca-certificates/balenaServerCA.crt
+            # shellcheck disable=SC2034
+            CURL_CA_BUNDLE=${CURL_CA_BUNDLE:-${CERTS}/ca-bundle.pem}
+        else
+            rm -f /usr/local/share/ca-certificates/balena*CA.crt
+            unset CURL_CA_BUNDLE
+        fi
+        update-ca-certificates
+    fi
+}
+
+update_ca_certificates
 
 if [ -n "${HAPROXY_CRT}" ] && [ -n "${HAPROXY_KEY}" ]; then
 	tmpcfg="$(mktemp)"
