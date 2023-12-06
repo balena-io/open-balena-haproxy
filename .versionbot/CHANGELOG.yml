@@ -1,4 +1,17 @@
 - commits:
+    - subject: Update haproxy Docker tag to v2.9
+      hash: abd79c7ba92cb9741ba68c8ac007ab760850bc2d
+      body: |
+        Update haproxy from 2.8 to 2.9
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: Self-hosted Renovate Bot
+      nested: []
+  version: 4.3.2
+  title: ""
+  date: 2023-12-06T02:14:28.185Z
+- commits:
     - subject: Update CA certs
       hash: e90d139ffd7638874e0a9c336bc3f657b0174e8e
       body: ""
