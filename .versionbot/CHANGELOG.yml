@@ -1,4 +1,17 @@
 - commits:
+    - subject: Pin product-os/flowzone action to a53cf4b
+      hash: 9ce7c01e107c4cace106cab87e1f8e4bfc0cba79
+      body: |
+        Update product-os/flowzone
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: balena-renovate[bot]
+      nested: []
+  version: 4.3.3
+  title: ""
+  date: 2026-03-24T18:32:48.018Z
+- commits:
     - subject: Update haproxy Docker tag to v2.9
       hash: abd79c7ba92cb9741ba68c8ac007ab760850bc2d
       body: |
@@ -319,7 +332,8 @@
               body: >
                 * TOKEN_AUTH_REALM => REGISTRY2_TOKEN_AUTH_REALM
 
-                * REGISTRY2_TOKEN_AUTH_REALM is the new name for BALENA_TOKEN_AUTH_REALM
+                * REGISTRY2_TOKEN_AUTH_REALM is the new name for
+                BALENA_TOKEN_AUTH_REALM
               footer:
                 Change-type: patch
                 change-type: patch
