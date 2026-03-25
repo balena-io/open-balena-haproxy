@@ -10,7 +10,7 @@ on:
 jobs:
   flowzone:
     name: Flowzone
-    uses: product-os/flowzone/.github/workflows/flowzone.yml@eb703ea5421a9679877edcf97dfb8bb709c72a0c # master
+    uses: product-os/flowzone/.github/workflows/flowzone.yml@8b1df62321de225dad064f4dc2001d5acb3ffbaf # master
     secrets: inherit
     with:
       docker_images: balena/open-balena-haproxy
