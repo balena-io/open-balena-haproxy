@@ -1,4 +1,14 @@
 - commits:
+    - subject: "patch: ARM64 builds"
+      hash: 2e32bd898ac29d028176fcb68914ff02a42136ee
+      body: ""
+      footer: {}
+      author: Anton B.
+      nested: []
+  version: 4.3.17
+  title: ""
+  date: 2026-05-05T19:23:39.462Z
+- commits:
     - subject: Revert flowzone pinning to master
       hash: d3084f3eb6885e94ff6bdb6ba6dbb207967943e1
       body: ""
