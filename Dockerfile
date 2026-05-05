@@ -1,5 +1,5 @@
 # https://hub.docker.com/_/haproxy
-FROM haproxy:2.9-alpine
+FROM haproxy:3.3-alpine
 
 VOLUME [ "/certs" ]
 
