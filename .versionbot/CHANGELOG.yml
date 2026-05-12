@@ -1,4 +1,17 @@
 - commits:
+    - subject: Pin haproxy Docker tag to 3e29449
+      hash: 43d84dd7ea4baf1d4b5665cf9cf751b1841b1e73
+      body: |
+        Update haproxy
+      footer:
+        Change-type: patch
+        change-type: patch
+      author: balena-renovate[bot]
+      nested: []
+  version: 4.3.18
+  title: ""
+  date: 2026-05-12T18:02:45.531Z
+- commits:
     - subject: "patch: ARM64 builds"
       hash: 2e32bd898ac29d028176fcb68914ff02a42136ee
       body: ""
