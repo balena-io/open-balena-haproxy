@@ -6,11 +6,13 @@ on:
     branches:
       - "main"
       - "master"
+  push:
+    branches: [main, master]
 
 jobs:
   flowzone:
     name: Flowzone
-    uses: product-os/flowzone/.github/workflows/flowzone.yml@master
+    uses: product-os/flowzone/.github/workflows/flowzone.yml@master # flowzonify 0.4.0
     secrets: inherit
     with:
       docker_images: balena/open-balena-haproxy
